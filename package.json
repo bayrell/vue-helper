@@ -1,0 +1,16 @@
+{
+    "description": "VueJS Helper",
+    "license": "MIT License",
+    "contributors": [
+      {
+        "name": "Ildar Bikmamatov",
+        "email": "support@bayrell.org"
+      }
+    ],
+    "files": [
+      "*.ts"
+    ],
+    "main": "index.ts",
+    "name": "vue-helper",
+    "version": "0.0.1"
+  }
