@@ -28,7 +28,7 @@ import { createStore, Store } from "vuex";
 /**
  * Returns VueJS model
  */
-export const getModel = (instance: any) =>
+export const getModel = (instance) =>
 {
 	let arr = instance.store_path.slice();
 	let obj = instance.$store.state;
@@ -52,10 +52,10 @@ export const getModel = (instance: any) =>
 /**
  * Returns mutations list from class state prototype
  */
-export function getMutations (proto: any): Record<string, any>
+export function getMutations (proto)
 {
-	let res: Record<string, any> = {};
-	let items:Array<string> = proto.mutations();
+	let res = {};
+	let items = proto.mutations();
 	for (let i = 0; i < items.length; i++)
 	{
 		let method_name = items[i];
@@ -69,10 +69,10 @@ export function getMutations (proto: any): Record<string, any>
 /**
  * Build store from class state prototype
  */
-export function buildStoreConfig (proto: any): Record<string, any>
+export function buildStoreConfig (proto)
 {
 	/* Create store */
-	let res: Record<string, any> =
+	let res =
 	{
 		namespaced: true,
 		state: {},
@@ -80,12 +80,12 @@ export function buildStoreConfig (proto: any): Record<string, any>
 	};
 
 	/* Build modules */
-	let modules:Record<string, any> = proto.modules();
-	let modules_keys:Array<string> = Object.keys(modules);
+	let modules = proto.modules();
+	let modules_keys = Object.keys(modules);
 	for (let i=0; i<modules_keys.length; i++)
 	{
-		let module_name:string = modules_keys[i];
-		let module:any = modules[module_name];
+		let module_name = modules_keys[i];
+		let module = modules[module_name];
 		res["modules"][modules_keys[i]] = buildStoreConfig(module);
 	}
 
@@ -101,17 +101,17 @@ export function buildStoreConfig (proto: any): Record<string, any>
 /**
  * Build store
  */
-export function buildStore(proto: any)
+export function buildStore(proto)
 {
-	let config:Record<string, any> = buildStoreConfig(proto);
+	let config = buildStoreConfig(proto);
 	let obj = new proto();
 	let keys = Object.keys(obj);
-	let store: Record<string, any> = createStore( config )
+	let store = createStore( config )
 	
 	/* Init store */
 	for (let i=0; i<keys.length; i++)
 	{
-		let key: string = keys[i];
+		let key = keys[i];
 		store.state[key] = obj[key];
 	}
 
@@ -142,9 +142,9 @@ export const mixin =
 		{
 			return getModel(this);
 		},
-		$commit (action: string, params: any)
+		$commit (action, params)
 		{
-			let obj: any = this;
+			let obj = this;
 			var arr = obj.store_path.concat( action.split("/") );
 			obj.$store.commit(arr.join("/"), params);
 		},
