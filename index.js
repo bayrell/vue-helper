@@ -138,6 +138,11 @@ export const mixin =
 	},
 	methods:
 	{
+		setPageTitle(s)
+		{
+			storeInstance.state.title = s;
+			document.title = s;
+		},
 		getModel()
 		{
 			return getModel(this);
@@ -170,3 +175,50 @@ export const mixin =
 		}
 	}
 };
+
+
+export class BaseObject
+{
+	/**
+	 * Assign values
+	 */
+	assignValues(params)
+	{
+		return this;
+	}
+	
+	
+	/**
+	 * Returns values
+	 */
+	getValues()
+	{
+		return {};
+	}
+}
+
+export function removeDuplicates(items)
+{
+	items = items.filter( (value, index) => items.indexOf(value) === index );
+	return items;
+}
+
+
+export function findIndexByKey(obj, key, value)
+{
+	for (let i=0; i<obj.length; i++)
+	{
+		if (obj[i][key] == value)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+export function findItemByKey(obj, key, value)
+{
+	let index = findIndexByKey(obj, key, value);
+	if (index == -1) return null;
+	return obj[index];
+}
