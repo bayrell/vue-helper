@@ -30,7 +30,7 @@ import { createStore, Store } from "vuex";
  */
 export const getModel = (instance) =>
 {
-	let arr = instance.store_path.slice();
+	let arr = instance.store_path ? instance.store_path.slice() : [];
 	let obj = instance.$store.state;
 	
 	while (arr.length != 0)
@@ -148,5 +148,25 @@ export const mixin =
 			var arr = obj.store_path.concat( action.split("/") );
 			obj.$store.commit(arr.join("/"), params);
 		},
+		attr(obj, keys, default_value = null)
+		{
+			if (obj == null) return default_value;
+			if (keys instanceof String || typeof keys == "string")
+			{
+				let s = String(keys);
+				keys = new Array();
+				keys.push(s);
+			}
+
+			let res = obj;
+			for (let i=0; i<keys.length; i++)
+			{
+				let key = keys[i];
+				if (res[key] == undefined) return default_value;
+				res = res[key];
+			}
+
+			return res;
+		}
 	}
 };
