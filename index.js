@@ -55,11 +55,14 @@ export const getModel = (instance) =>
 export function getMutations (proto)
 {
 	let res = {};
-	let items = proto.mutations();
-	for (let i = 0; i < items.length; i++)
+	if (proto.mutations != undefined)
 	{
-		let method_name = items[i];
-		res[method_name] = proto[method_name];
+		let items = proto.mutations();
+		for (let i = 0; i < items.length; i++)
+		{
+			let method_name = items[i];
+			res[method_name] = proto[method_name];
+		}
 	}
 	return res;
 }
@@ -80,15 +83,18 @@ export function buildStoreConfig (proto)
 	};
 
 	/* Build modules */
-	let modules = proto.modules();
-	let modules_keys = Object.keys(modules);
-	for (let i=0; i<modules_keys.length; i++)
+	if (proto.modules != undefined)
 	{
-		let module_name = modules_keys[i];
-		let module = modules[module_name];
-		res["modules"][modules_keys[i]] = buildStoreConfig(module);
+		let modules = proto.modules();
+		let modules_keys = Object.keys(modules);
+		for (let i=0; i<modules_keys.length; i++)
+		{
+			let module_name = modules_keys[i];
+			let module = modules[module_name];
+			res["modules"][modules_keys[i]] = buildStoreConfig(module);
+		}
 	}
-
+	
 	/* Get mutations  */
 	res["mutations"] = getMutations(proto);
 	
