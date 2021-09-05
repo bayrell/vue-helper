@@ -37,3 +37,4 @@ export function getMutations(proto: any): any;
 
 export function removeDuplicates(items: any): any;
 
+export function deepClone(obj: any): any;
