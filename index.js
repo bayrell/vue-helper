@@ -83,9 +83,9 @@ export function buildStoreConfig (proto)
 	};
 
 	/* Build modules */
-	if (proto.modules != undefined)
+	if (proto.components != undefined)
 	{
-		let modules = proto.modules();
+		let modules = proto.components();
 		let modules_keys = Object.keys(modules);
 		for (let i=0; i<modules_keys.length; i++)
 		{
@@ -185,6 +185,7 @@ export const mixin =
 
 export class BaseObject
 {
+	
 	/**
 	 * Assign values
 	 */
