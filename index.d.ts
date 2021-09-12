@@ -23,6 +23,12 @@ export const mixin: {
     };
 };
 
+export function attr(obj: any, keys: any, default_value: any): any;
+
+export function componentExtend(child: any, parent: any): any;
+
+export function setPageTitle(s: string): any;
+
 export function buildStore(proto: any): any;
 
 export function buildStoreConfig(proto: any): any;

@@ -146,8 +146,7 @@ export const mixin =
 	{
 		setPageTitle(s)
 		{
-			storeInstance.state.title = s;
-			document.title = s;
+			setPageTitle(s);
 		},
 		getModel()
 		{
@@ -161,23 +160,7 @@ export const mixin =
 		},
 		attr(obj, keys, default_value = null)
 		{
-			if (obj == null) return default_value;
-			if (keys instanceof String || typeof keys == "string")
-			{
-				let s = String(keys);
-				keys = new Array();
-				keys.push(s);
-			}
-
-			let res = obj;
-			for (let i=0; i<keys.length; i++)
-			{
-				let key = keys[i];
-				if (res[key] == undefined) return default_value;
-				res = res[key];
-			}
-
-			return res;
+			return attr(obj, keys, default_value);
 		}
 	}
 };
@@ -203,6 +186,99 @@ export class BaseObject
 		return {};
 	}
 }
+
+
+/**
+ * Extend component
+ */
+export function componentExtend(child, parent)
+{
+	const parent2 = Object.assign({}, parent);
+	
+	function assign(parent2, parent, child, attr_name)
+	{
+		if (child[attr_name] != undefined)
+		{
+			if (parent[attr_name] != undefined)
+			{
+				parent2[attr_name] = Object.assign({}, parent[attr_name], child[attr_name]);
+			}
+			else
+			{
+				parent2[attr_name] = Object.assign({}, child[attr_name]);
+			}
+		}
+	}
+	
+	assign(parent2, parent, child, "methods");
+	assign(parent2, parent, child, "computed");
+	
+	const events =
+	[
+		"beforeCreate",
+		"created",
+		"beforeMount",
+		"mounted",
+		"beforeUpdate",
+		"updated",
+		"activated",
+		"deactivated",
+		"beforeUnmount",
+		"unmounted",
+		"errorCaptured",
+		"renderTracked",
+		"renderTriggered",
+	];
+	
+	for (let i=0; i<events.length; i++)
+	{
+		let event_name = events[i];
+		if (child[event_name] != undefined && parent2[event_name] != undefined)
+		{
+			delete parent2[event_name];
+		}
+	}
+	
+	//child.extends = parent;
+	if (child.components == undefined) child.components = {};
+	child.components[parent.name] = parent2;
+}
+
+
+/**
+ * Set page title
+ */
+export function setPageTitle(s)
+{
+	storeInstance.state.title = s;
+	document.title = s;
+}
+
+
+/**
+ * Attr
+ */
+export function attr(obj, keys, default_value = null)
+{
+	if (obj == null) return default_value;
+	if (keys instanceof String || typeof keys == "string")
+	{
+		let s = String(keys);
+		keys = new Array();
+		keys.push(s);
+	}
+
+	let res = obj;
+	for (let i=0; i<keys.length; i++)
+	{
+		let key = keys[i];
+		if (res[key] == undefined) return default_value;
+		res = res[key];
+	}
+
+	return res;
+}
+
 
 export function removeDuplicates(items)
 {
