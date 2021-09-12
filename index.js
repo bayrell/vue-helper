@@ -212,6 +212,7 @@ export function componentExtend(child, parent)
 	
 	assign(parent2, parent, child, "methods");
 	assign(parent2, parent, child, "computed");
+	assign(parent2, parent, child, "components");
 	
 	const events =
 	[
