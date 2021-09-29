@@ -23,7 +23,6 @@
  */
 
 import { createStore, Store } from "vuex";
-import { ConcatenationScope } from "webpack";
 
 
 /**
