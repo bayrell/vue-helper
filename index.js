@@ -23,29 +23,18 @@
  */
 
 import { createStore, Store } from "vuex";
+import { ConcatenationScope } from "webpack";
 
 
 /**
  * Returns VueJS model
  */
-export const getModel = (instance) =>
+export function getModel (instance)
 {
 	let arr = instance.store_path ? instance.store_path.slice() : [];
-	let obj = instance.$store.state;
-	
-	while (arr.length != 0)
-	{
-		let key = arr.shift();
-		if (obj[key] == undefined)
-		{
-			obj = null;
-			break;
-		}
-		obj = obj[key];
-	}
-	
-	return obj;
-};
+	let obj = instance.$store.state;	
+	return attr(obj, arr, null);
+}
 
 
 
@@ -140,6 +129,10 @@ export const mixin =
 		model()
 		{
 			return getModel(this);
+		},
+		state()
+		{
+			return this.$store.state;
 		}
 	},
 	methods:
@@ -151,6 +144,10 @@ export const mixin =
 		getModel()
 		{
 			return getModel(this);
+		},
+		getState()
+		{
+			return this.$store.state;
 		},
 		$commit (action, params)
 		{
@@ -199,13 +196,15 @@ export function componentExtend(child, parent)
 	{
 		if (child[attr_name] != undefined)
 		{
-			if (parent[attr_name] != undefined)
+			if (parent[attr_name] instanceof Array)
 			{
-				parent2[attr_name] = Object.assign({}, parent[attr_name], child[attr_name]);
+				parent2[attr_name] = parent[attr_name].concat(child[attr_name]);
+				parent2[attr_name] = removeDuplicates(parent2[attr_name]);
 			}
 			else
 			{
-				parent2[attr_name] = Object.assign({}, child[attr_name]);
+				parent2[attr_name] = Object.assign({}, parent[attr_name]);
+				parent2[attr_name] = Object.assign(parent2[attr_name], child[attr_name]);
 			}
 		}
 	}
@@ -213,6 +212,8 @@ export function componentExtend(child, parent)
 	assign(parent2, parent, child, "methods");
 	assign(parent2, parent, child, "computed");
 	assign(parent2, parent, child, "components");
+	assign(parent2, parent, child, "emits");
+	assign(parent2, parent, child, "props");
 	
 	const events =
 	[
@@ -319,4 +320,24 @@ export function deepClone(obj)
 		}
 	}
 	return res;
+}
+
+export function objContains(obj1, obj2)
+{
+	if (typeof(obj1) != "object" || obj1 === null) return false;
+	if (typeof(obj2) != "object" || obj2 === null) return false;
+	for (let key in obj1)
+	{
+		if (obj1.hasOwnProperty(key))
+		{
+			if (!obj2.hasOwnProperty(key)) return false;
+			if (obj1[key] != obj2[key]) return false;
+		}
+	}
+	return true;
+}
+
+export function objEquals(obj1, obj2)
+{
+	return objContains(obj1, obj2) && objContains(obj2, obj1);
 }

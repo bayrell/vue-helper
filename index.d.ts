@@ -44,3 +44,7 @@ export function getMutations(proto: any): any;
 export function removeDuplicates(items: any): any;
 
 export function deepClone(obj: any): any;
+
+export function objContains(obj1: any, obj2: any): boolean;
+
+export function objEquals(obj1: any, obj2: any): boolean;
