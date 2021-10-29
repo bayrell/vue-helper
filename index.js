@@ -115,6 +115,36 @@ export function buildStore(proto)
 
 
 /**
+ * Route update
+ */
+export function onRouteUpdate(kind, to, from, next)
+{
+	let props = to.matched[0].props.default;
+	let store_path = props.store_path;
+	let component = to.matched[0].components.default;
+	let model = attr(storeInstance.state, store_path, null);
+	if (model && typeof model.constructor.onRouteUpdate == 'function')
+	{
+		model.constructor.onRouteUpdate(model, {
+			kind: kind,
+			props,
+			to,
+			from,
+			next,
+			store_path,
+			component,
+			setPageTitle,
+		});
+	}
+	else
+	{
+		next();
+	}
+}
+
+
+
+/**
  * VueJS Mixin
  */
 export const mixin =
@@ -157,8 +187,8 @@ export const mixin =
 		attr(obj, keys, default_value = null)
 		{
 			return attr(obj, keys, default_value);
-		}
-	}
+		},
+	},
 };
 
 
@@ -214,6 +244,26 @@ export function componentExtend(child, parent)
 	assign(parent2, parent, child, "emits");
 	assign(parent2, parent, child, "props");
 	
+	function copy(parent, child, attr_name)
+	{
+		if (parent[attr_name] != undefined && parent[attr_name] instanceof Array)
+		{
+			if (child[attr_name] == undefined)
+			{
+				child[attr_name] = parent[attr_name].slice();
+			}
+			else if (child[attr_name] instanceof Array)
+			{
+				parent[attr_name] = parent[attr_name].concat(child[attr_name]);
+				parent[attr_name] = removeDuplicates(parent[attr_name]);
+			}
+		}
+	}
+	
+	/* Copy props to child */
+	copy(parent, child, "props");
+	copy(parent, child, "emits");
+	
 	const events =
 	[
 		"beforeCreate",
@@ -240,7 +290,6 @@ export function componentExtend(child, parent)
 		}
 	}
 	
-	//child.extends = parent;
 	if (child.components == undefined) child.components = {};
 	child.components[parent.name] = parent2;
 }
