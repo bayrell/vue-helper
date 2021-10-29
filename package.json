@@ -8,6 +8,9 @@
     }
   ],
   "files": [
+    "Crud/*.vue",
+    "Crud/*.ts",
+    "Crud/*.js",
     "*.js",
     "*.d.ts"
   ],
