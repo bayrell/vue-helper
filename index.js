@@ -117,15 +117,16 @@ export function buildStore(proto)
 /**
  * Route update
  */
-export function onRouteUpdate(kind, to, from, next)
+export async function onRouteUpdate(kind, to, from, next)
 {
 	let props = to.matched[0].props.default;
 	let store_path = props.store_path;
 	let component = to.matched[0].components.default;
 	let model = attr(storeInstance.state, store_path, null);
-	if (model && typeof model.constructor.onRouteUpdate == 'function')
+	if (model)
 	{
-		model.constructor.onRouteUpdate(model, {
+		let route =
+		{
 			kind: kind,
 			props,
 			to,
@@ -134,7 +135,19 @@ export function onRouteUpdate(kind, to, from, next)
 			store_path,
 			component,
 			setPageTitle,
-		});
+		};
+		if (typeof model.constructor.onRouteUpdate == 'function')
+		{
+			await model.constructor.onRouteUpdate(model, route);
+		}
+		else if (typeof model.constructor.pageLoadData == 'function')
+		{
+			if (route.kind == "beforeRouteEnter" || route.kind == "beforeRouteUpdate")
+			{
+				await model.constructor.pageLoadData(model, route);
+			}
+			next();
+		}
 	}
 	else
 	{

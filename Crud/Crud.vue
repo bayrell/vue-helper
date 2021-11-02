@@ -94,7 +94,7 @@
 								v-bind:data-route-name="route.name"
 							>
 								<Button type="success">
-									[+] {{ model.getMessage("top_button_show_add_title", model.current_item) }}
+									[+] {{ model.constructor.getMessage("top_button_show_add_title", model.current_item) }}
 								</Button>
 							</a>
 						</router-link>
@@ -102,7 +102,7 @@
 					
 					<div class="component_crud__top_button" v-else >
 						<Button type="success" @click="onShowAdd()">
-							[+] {{ model.getMessage("top_button_show_add_title", model.current_item) }}
+							[+] {{ model.constructor.getMessage("top_button_show_add_title", model.current_item) }}
 						</Button>
 					</div>
 					
@@ -152,7 +152,7 @@
 					width="800px" buttons="false"
 				>
 					<template v-slot:title>
-						{{ model.getMessage("form_title", model.current_item) }}
+						{{ model.constructor.getMessage("form_title", model.current_item) }}
 					</template>
 					<template v-slot:content>
 						<Form v-bind:store_path="store_path.concat('form_save')">
@@ -167,10 +167,10 @@
 			<slot name="dialog_delete">
 				<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
 					<template v-slot:title>
-						{{ model.getMessage("delete_title", model.form_delete.item) }}
+						{{ model.constructor.getMessage("delete_title", model.form_delete.item) }}
 					</template>
 					<template v-slot:text>
-						{{ model.getMessage("delete_text", model.form_delete.item) }}
+						{{ model.constructor.getMessage("delete_text", model.form_delete.item) }}
 					</template>
 					<template v-slot:buttons>
 						<Button type="danger" @click="onDialogFormButtonClick('yes')">Yes</Button>
@@ -209,7 +209,7 @@ export const Crud =
 	{
 		route_names: function()
 		{
-			return this.model.getRouteNames();
+			return this.model.constructor.getRouteNames();
 		},
 	},
 	methods:
@@ -274,7 +274,7 @@ export const Crud =
 		},
 		onSaveFormButtonCancelClick: function()
 		{
-			let route_names = this.model.getRouteNames();
+			let route_names = this.model.constructor.getRouteNames();
 			if (route_names.list == undefined)
 			{
 				this.model.dialog_form.hide();

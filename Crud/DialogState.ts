@@ -35,7 +35,7 @@ export class DialogButton extends BaseObject
     action: string = "";
     label: string = "";
     type: string = "";
-    
+	
     
     /**
 	 * From object
@@ -70,7 +70,7 @@ export class DialogState extends BaseObject
     buttons: Array<DialogButton> = [];
     error_code: number = 0;
 	message: string = "";
-	
+	tag: any = null;
 	
 	
     /**

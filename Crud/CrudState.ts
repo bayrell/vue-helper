@@ -214,7 +214,7 @@ export class CrudState
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "";
 	}
@@ -224,7 +224,7 @@ export class CrudState
 	/**
 	 * Return api search url
 	 */
-	getApiUrlSearch()
+	static getApiUrlSearch()
 	{
 		return "/api/" + this.getApiObjectName() + "/crud/search/";
 	}
@@ -234,7 +234,7 @@ export class CrudState
 	/**
 	 * Return api search url
 	 */
-	getApiUrlItem(id: string)
+	static getApiUrlItem(id: string)
 	{
 		return "/api/" + this.getApiObjectName() + "/crud/item/" + encodeURIComponent(id) + "/";
 	}
@@ -244,7 +244,7 @@ export class CrudState
 	/**
 	 * Return api create url
 	 */
-	getApiUrlCreate()
+	static getApiUrlCreate()
 	{
 		return "/api/" + this.getApiObjectName() + "/crud/create/";
 	}
@@ -254,7 +254,7 @@ export class CrudState
 	/**
 	 * Return api update url
 	 */
-	getApiUrlUpdate(item: CrudItem)
+	static getApiUrlUpdate(item: CrudItem)
 	{
 		return "/api/" + this.getApiObjectName() + "/crud/edit/" + encodeURIComponent(this.getItemId(item)) + "/";
 	}
@@ -264,7 +264,7 @@ export class CrudState
 	/**
 	 * Return api delete url
 	 */
-	getApiUrlDelete(item: CrudItem)
+	static getApiUrlDelete(item: CrudItem)
 	{
 		return "/api/" + this.getApiObjectName() + "/crud/delete/" + encodeURIComponent(this.getItemId(item)) + "/";
 	}
@@ -274,7 +274,7 @@ export class CrudState
 	/**
 	 * Returns route names
 	 */
-	getRouteNames(): Record<string, string>
+	static getRouteNames(): Record<string, string>
 	{
 		return {};
 	}
@@ -284,7 +284,7 @@ export class CrudState
 	/**
 	 * Return route name
 	 */
-	getRouteName(name: string): string
+	static getRouteName(name: string): string
 	{
 		let names = this.getRouteNames();
 		if (names && names[name] != undefined) return names[name];
@@ -296,16 +296,17 @@ export class CrudState
 	/**
 	 * Returns new item
 	 */
-	createNewItem(): CrudItem
+	static createNewItem(): CrudItem
 	{
 		return new CrudItem();
 	}
 	
 	
+	
 	/**
 	 * Returns new item instance
 	 */
-	createNewItemInstance(data:any = null): CrudItem
+	static createNewItemInstance(data:any = null): CrudItem
 	{
 		let item = this.createNewItem();
 		if (data != undefined && data != null) item.assignValues(data);
@@ -389,7 +390,7 @@ export class CrudState
 	/**
 	 * Returns form value
 	 */
-	getItemName(item: CrudItem | null): string
+	static getItemName(item: CrudItem | null): string
 	{
 		return "";
 	}
@@ -399,7 +400,7 @@ export class CrudState
 	/**
 	 * Returns item id
 	 */
-	getItemId(item: CrudItem | null): string
+	static getItemId(item: CrudItem | null): string
 	{
 		return "";
 	}
@@ -409,7 +410,7 @@ export class CrudState
 	/**
 	 * Returns crud message
 	 */
-	getMessage(message_type: string, item: CrudItem | null): string
+	static getMessage(message_type: string, item: CrudItem | null): string
 	{
 		if (message_type == "list_title")
 		{
@@ -465,7 +466,7 @@ export class CrudState
 	 */
 	addItem(data: any)
 	{
-		let item:CrudItem = this.createNewItemInstance(data);
+		let item:CrudItem = (this.constructor as any).createNewItemInstance(data);
 		this.items.unshift(item);
 		this.sortItems();
 	}
@@ -479,7 +480,7 @@ export class CrudState
 	{
 		for (let i = 0; i < items.length; i++)
 		{
-			let item = this.createNewItemInstance(items[i]);
+			let item = (this.constructor as any).createNewItemInstance(items[i]);
 			this.items.push(item);
 		}
 		this.sortItems();
@@ -495,7 +496,7 @@ export class CrudState
 		let index = this.findItemByPrimaryKey(old_item);
 		if (index != -1)
 		{
-			new_item = this.createNewItemInstance(new_item);
+			new_item = (this.constructor as any).createNewItemInstance(new_item);
 			this.items[index] = new_item;
 		}
 	}
@@ -597,28 +598,12 @@ export class CrudState
 	
 	
 	/**
-	 * Route update
-	 */
-	static async onRouteUpdate(model: CrudState, route: any)
-	{
-		if (route.kind == "beforeRouteEnter" || route.kind == "beforeRouteUpdate")
-		{
-			model.setPageAction(route.props.action);
-			await this.pageLoadData(model, route);
-		}
-		else
-		{
-			route.next();
-		}
-	}
-	
-	
-	
-	/**
 	 * Page data
 	 */
 	static async pageLoadData(model: CrudState, route: any)
 	{
+		model.setPageAction(route.props.action);
+		
 		if (model.page_action == "list")
 		{
 			await this.listPageLoadData(model, route);
@@ -638,8 +623,6 @@ export class CrudState
 		{
 			await this.deletePageLoadData(model, route);
 		}
-		
-		route.next();
 	}
 	
 	
@@ -650,11 +633,11 @@ export class CrudState
 	static async listPageLoadData(model: CrudState, route: any)
 	{
 		/* Set page title */
-		let page_title = model.getMessage("list_title", null);
+		let page_title = this.getMessage("list_title", null);
 		route.setPageTitle(page_title);
 		
 		/* Ajax request */
-		let response:AxiosResponse | null = await model.apiLoadData();
+		let response:AxiosResponse | null = await this.apiLoadData();
 		
 		/* Set result */
 		model.items = new Array();
@@ -672,7 +655,7 @@ export class CrudState
 	static async addPageLoadData(model: CrudState, route: any)
 	{
 		/* Set page title */
-		let page_title = model.getMessage("add_title", null);
+		let page_title = this.getMessage("add_title", null);
 		route.setPageTitle(page_title);
 		
 		model.form_save.clear();
@@ -686,11 +669,11 @@ export class CrudState
 	static async editPageLoadData(model: CrudState, route: any)
 	{
 		/* Set page title */
-		let page_title = model.getMessage("edit_title", null);
+		let page_title = this.getMessage("edit_title", null);
 		route.setPageTitle(page_title);
 		
 		/* Ajax request */
-		let response:AxiosResponse | null = await model.apiLoadItem(route.to.params.id);
+		let response:AxiosResponse | null = await this.apiLoadItem(route.to.params.id);
 		
 		model.form_save.setLoadResponse(response);
 	}
@@ -703,7 +686,7 @@ export class CrudState
 	static async deletePageLoadData(model: CrudState, route: any)
 	{
 		/* Set page title */
-		let page_title = model.getMessage("delete_title", null);
+		let page_title = this.getMessage("delete_title", null);
 		route.setPageTitle(page_title);
 	}
 	
@@ -719,7 +702,7 @@ export class CrudState
 		let item_original:CrudItem = model.form_save.item_original as CrudItem;
 		
 		model.form_save.setWaitResponse();
-		let response:AxiosResponse | null = await model.apiSaveForm(item, item_original);
+		let response:AxiosResponse | null = await this.apiSaveForm(item, item_original);
 		model.form_save.setAxiosResponse(response);
 		
 		if (item_original == null)
@@ -754,7 +737,7 @@ export class CrudState
 		let item:CrudItem = model.form_delete.item as CrudItem;
 		
 		model.dialog_delete.setWaitResponse();
-		let response:AxiosResponse | null = await model.apiDeleteForm(item);
+		let response:AxiosResponse | null = await this.apiDeleteForm(item);
 		model.dialog_delete.setAxiosResponse(response);
 		
 		if (item && response && typeof(response.data) == "object" && response.data.error.code == 1)
@@ -769,7 +752,7 @@ export class CrudState
 	/**
 	 * Load data api
 	 */
-	async apiLoadData(): Promise<AxiosResponse | null>
+	static async apiLoadData(): Promise<AxiosResponse | null>
 	{
 		let url = this.getApiUrlSearch();
 		let response:AxiosResponse | null = null;
@@ -794,7 +777,7 @@ export class CrudState
 	/**
 	 * Load data api
 	 */
-	async apiLoadItem(id: string): Promise<AxiosResponse | null>
+	static async apiLoadItem(id: string): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		
@@ -820,7 +803,7 @@ export class CrudState
 	/**
 	 * Save form api
 	 */
-	async apiSaveForm(item:CrudItem, item_original:CrudItem): Promise<AxiosResponse | null>
+	static async apiSaveForm(item:CrudItem, item_original:CrudItem): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		
@@ -866,7 +849,7 @@ export class CrudState
 	/**
 	 * Delete form api
 	 */
-	async apiDeleteForm(item:CrudItem): Promise<AxiosResponse | null>
+	static async apiDeleteForm(item:CrudItem): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		

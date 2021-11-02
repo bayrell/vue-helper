@@ -86,7 +86,7 @@ export const RowButtons =
 	{
 		getItemId: function()
 		{
-			let id = this.crud.model.getItemId(this.crud.item);
+			let id = this.crud.model.constructor.getItemId(this.crud.item);
 			if (id == "") return "0";
 			return id;
 		},

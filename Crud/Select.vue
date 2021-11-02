@@ -50,7 +50,7 @@
 
 import { defineComponent } from 'vue';
 import { mixin, componentExtend } from 'vue-helper';
-import { CrudEvent } from "./CrudState";
+import { CrudEvent, CRUD_EVENTS } from "./CrudState";
 import { Field } from './Field.vue';
 
 
