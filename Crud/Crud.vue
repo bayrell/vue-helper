@@ -275,7 +275,13 @@ export const Crud =
 		onSaveFormButtonCancelClick: function()
 		{
 			let route_names = this.model.constructor.getRouteNames();
-			if (route_names.list == undefined)
+			let item_original = this.model.form_save.item_original;
+			
+			let is_back = false;
+			if (item_original == null && route_names.add != undefined) is_back = true;
+			if (item_original != null && route_names.edit != undefined) is_back = true;
+			
+			if (!is_back)
 			{
 				this.model.dialog_form.hide();
 			}
