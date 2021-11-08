@@ -343,6 +343,23 @@ export function attr(obj, keys, default_value = null)
 }
 
 
+/**
+ * Set attr
+ */
+export function setAttr(obj, keys, new_value)
+{
+	keys = keys.slice();
+	let count_keys = keys.length;
+	if (count_keys == 1) obj[keys[0]] = new_value;
+	else if (count_keys > 1)
+	{
+		let first_key = keys.shift();
+		if (obj[first_key] == undefined) obj[first_key] = {};
+		setAttr(obj[first_key], keys, new_value);
+	}
+}
+
+
 export function removeDuplicates(items)
 {
 	items = items.filter( (value, index) => items.indexOf(value) === index );

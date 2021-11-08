@@ -44,7 +44,7 @@ component_codemirror_textarea{
 import _CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import { defineComponent } from 'vue';
-import { mixin, componentExtend } from 'vue-helper';
+import { mixin, componentExtend, attr } from 'vue-helper';
 import { CrudEvent, CRUD_EVENTS } from "./CrudState";
 import { Field } from './Field.vue';
 
@@ -112,8 +112,8 @@ export const CodeMirror =
 		this.new_value = "";
 		
 		/* Set min height */
-		let min_height = this.crud.field.component_params["min-height"];
-		if (min_height != undefined)
+		let min_height = attr(this, ["crud", "field", "component_params", "min-height"], null);
+		if (min_height != undefined && min_height != null)
 		{
 			this.instance.display.wrapper.style.minHeight = min_height;
 		}

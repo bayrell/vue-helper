@@ -47,6 +47,7 @@ export const Field =
 		"name",
 		"type",
 		"crud",
+		"store_path",
 	],
 	computed:
 	{

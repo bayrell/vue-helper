@@ -34,7 +34,9 @@
 
 
 <template>
-	<input class="component_input" v-bind:name="name" v-bind:type="type" v-bind:value="value"
+	<input class="component_input"
+		v-bind:name="name" v-bind:type="type"
+		v-bind:value="getCurrentValue()"
 		@change="onChange(name, $event)"
 	/>
 </template>
@@ -43,7 +45,7 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend } from 'vue-helper';
+import { mixin, componentExtend, setAttr } from 'vue-helper';
 import { CrudEvent, CRUD_EVENTS } from "./CrudState";
 import { Field } from './Field.vue';
 
@@ -58,6 +60,11 @@ export const Input =
 	},
 	methods:
 	{
+		getCurrentValue: function()
+		{
+			if (this.store_path == undefined) return this.value;
+			return this.model;
+		},
 		onChange: function(name, $event)
 		{
 			let event = new CrudEvent();
@@ -65,6 +72,11 @@ export const Input =
 			event.item_name = name;
 			event.value = $event.target.value;
 			this.$emit( "crudEvent", event );
+			
+			if (this.store_path != undefined)
+			{
+				setAttr(this.$store.state, this.store_path, $event.target.value);
+			}
 		}
 	},
 	components:

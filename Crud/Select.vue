@@ -38,7 +38,7 @@
 		<option value="">Select value</option>
 		<option v-for="option in crud.field.options" :key="option.id"
 			v-bind:value="option.id"
-			v-bind:selected="isSelected(value, option.id)"
+			v-bind:selected="isSelected(getCurrentValue(), option.id)"
 		>
 			{{ option.value }}
 		</option>
@@ -49,7 +49,7 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, componentExtend } from 'vue-helper';
+import { mixin, componentExtend, setAttr } from 'vue-helper';
 import { CrudEvent, CRUD_EVENTS } from "./CrudState";
 import { Field } from './Field.vue';
 
@@ -64,6 +64,11 @@ export const Select =
 	},
 	methods:
 	{
+		getCurrentValue: function()
+		{
+			if (this.store_path == undefined) return this.value;
+			return this.model;
+		},
 		onChange: function(name, $event)
 		{
 			let event = new CrudEvent();
@@ -71,6 +76,11 @@ export const Select =
 			event.item_name = name;
 			event.value = $event.target.value;
 			this.$emit( "crudEvent", event );
+			
+			if (this.store_path != undefined)
+			{
+				setAttr(this.$store.state, this.store_path, $event.target.value);
+			}
 		},
 		isSelected: function(value, option_id)
 		{
