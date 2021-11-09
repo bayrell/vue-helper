@@ -29,8 +29,9 @@ export class CrudResultState
 {
     error_code: number = 0;
 	message: string = "";
+    response: AxiosResponse | null = null;
     
-    
+	
     /**
 	 * Clear
 	 */
@@ -58,6 +59,8 @@ export class CrudResultState
 	 */
 	setAxiosResponse(response: AxiosResponse | null)
 	{
+		this.response = response;
+		
 		if (response)
 		{
 			let data: any = response.data;

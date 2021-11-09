@@ -181,12 +181,14 @@
 		</div>
 		
 		<div class="component_crud_save" v-if="action == 'edit' || action == 'add'">
-			<Form v-bind:store_path="store_path.concat('form_save')">
-				<template v-slot:buttons>
-					<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-					<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
-				</template>
-			</Form>
+			<slot name="component_crud_save">
+				<Form v-bind:store_path="store_path.concat('form_save')">
+					<template v-slot:buttons>
+						<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+						<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+					</template>
+				</Form>
+			</slot>
 		</div>
 		
 		<slot name="crud_after"></slot>
