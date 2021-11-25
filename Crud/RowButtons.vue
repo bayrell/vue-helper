@@ -35,7 +35,20 @@
 
 
 <template>
-	<div class="component_row_buttons">
+	<div class="component_row_buttons" v-if="crud.field.component_params.buttons != undefined">
+		
+		<div class="component_row_button"
+			v-for="button in crud.field.component_params.buttons"
+			:key="button.action"
+		>
+			<Button v-bind:type="button.type" small="true" @click="onButtonClick(button.action)">
+				{{ button.label }}
+			</Button>
+		</div>
+		
+	</div>
+	
+	<div class="component_row_buttons" v-else>
 		
 		<div class="component_row_button"
 			v-if="crud.route_names != undefined && crud.route_names.edit != undefined"
@@ -52,8 +65,7 @@
 			</router-link>
 		</div>
 		
-		<div class="component_row_button" v-else
-		>
+		<div class="component_row_button" v-else>
 			<Button type="default" small="true" @click="onButtonClick('edit')">Edit</Button>
 		</div>
 		

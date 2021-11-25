@@ -181,7 +181,6 @@ export class CrudState
 	fields_table: Array<FieldInfo> = [];
 	items: Array<CrudItem> = new Array<CrudItem>();
 	form_save: FormState = new FormState();
-	form_delete: FormState = new FormState();
 	dialog_delete: DialogState = new DialogState();
 	dialog_form: DialogState = new DialogState();
 	active_item: CrudItem | null = null;
@@ -553,7 +552,7 @@ export class CrudState
 	{
 		this.form_save.clear();
 		this.form_save.setItem(item);
-		this.dialog_delete.clear();
+		this.dialog_form.clear();
 		this.dialog_form.show();
 	}
 	
@@ -566,10 +565,8 @@ export class CrudState
 	{
 		if (item != null)
 		{
-			this.form_delete.clear();
-			this.form_delete.item = deepClone(item);
-			this.form_delete.item_original = deepClone(item);
 			this.dialog_delete.clear();
+			this.dialog_delete.setItem(item);
 			this.dialog_delete.show();
 		}
 	}
@@ -734,7 +731,7 @@ export class CrudState
 	static async onDeleteForm(component: DefineComponent)
 	{
 		let model:CrudState = component.model;
-		let item:CrudItem = model.form_delete.item as CrudItem;
+		let item:CrudItem = model.dialog_delete.item as CrudItem;
 		
 		model.dialog_delete.setWaitResponse();
 		let response:AxiosResponse | null = await this.apiDeleteForm(item);

@@ -23,7 +23,8 @@
  */
 
 import { AxiosResponse } from "axios";
-import { BaseObject } from "vue-helper";
+import { BaseObject, deepClone } from "vue-helper";
+import { CrudState } from "./CrudState";
 
 export class DialogButtonClickEvent
 {
@@ -71,6 +72,7 @@ export class DialogState extends BaseObject
     error_code: number = 0;
 	message: string = "";
 	tag: any = null;
+	item: Record<string, any> = {};
 	
 	
     /**
@@ -120,12 +122,30 @@ export class DialogState extends BaseObject
 	
 	
 	/**
+	 * Set item
+	 */
+	setItem(item: CrudState)
+	{
+		if (item == null)
+		{
+			this.item = {};
+		}
+		else
+		{
+			this.item = deepClone(item);
+		}
+	}
+	
+	
+	
+	/**
 	 * Clear
 	 */
 	clear()
 	{
 		this.error_code = 0;
 		this.message = "";
+		this.item = {};
 	}
 	
 	

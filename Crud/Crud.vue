@@ -160,8 +160,8 @@
 					<template v-slot:content>
 						<Form v-bind:store_path="store_path.concat('form_save')">
 							<template v-slot:buttons>
-								<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-								<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
+								<Button type="primary" @click="onDialogFormButtonClick('form_save')">Save</Button>
+								<Button type="" @click="onDialogFormButtonClick('form_cancel')">Cancel</Button>
 							</template>
 						</Form>
 					</template>
@@ -170,14 +170,14 @@
 			<slot name="dialog_delete">
 				<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
 					<template v-slot:title>
-						{{ model.constructor.getMessage("delete_title", model.form_delete.item) }}
+						{{ model.constructor.getMessage("delete_title", model.dialog_delete.item) }}
 					</template>
 					<template v-slot:text>
-						{{ model.constructor.getMessage("delete_text", model.form_delete.item) }}
+						{{ model.constructor.getMessage("delete_text", model.dialog_delete.item) }}
 					</template>
 					<template v-slot:buttons>
-						<Button type="danger" @click="onDialogFormButtonClick('yes')">Yes</Button>
-						<Button type="" @click="onDialogFormButtonClick('no')">No</Button>
+						<Button type="danger" @click="onDialogFormButtonClick('delete_yes')">Yes</Button>
+						<Button type="" @click="onDialogFormButtonClick('delete_no')">No</Button>
 					</template>
 				</Dialog>
 			</slot>
@@ -186,13 +186,13 @@
 		<div class="component_crud_save" v-if="action == 'edit' || action == 'add'">
 			<slot name="component_crud_save_back">
 				<div class="component_crud_save_back">
-					<Button type="primary" @click="onDialogFormButtonClick('back')">Back</Button>
+					<Button type="primary" @click="onDialogFormButtonClick('form_back')">Back</Button>
 				</div>
 			</slot>
 			<slot name="component_crud_save">
 				<Form v-bind:store_path="store_path.concat('form_save')">
 					<template v-slot:buttons>
-						<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
+						<Button type="primary" @click="onDialogFormButtonClick('form_save')">Save</Button>
 					</template>
 				</Form>
 			</slot>
@@ -260,25 +260,25 @@ export const Crud =
 		},
 		onDialogFormButtonClick: function(action)
 		{
-			if (action == "save")
+			if (action == "form_save")
 			{
 				this.onSaveFormButtonSaveClick();
 			}
-			else if (action == "cancel")
+			else if (action == "form_cancel")
 			{
 				this.onSaveFormButtonCancelClick();
 			}
-			else if (action == "yes")
+			else if (action == "form_back")
+			{
+				this.onSaveFormButtonBackClick();
+			}
+			else if (action == "delete_yes")
 			{
 				this.onDeleteFormButtonYesClick();
 			}
-			else if (action == "no")
+			else if (action == "delete_no")
 			{
 				this.onDeleteFormButtonNoClick();
-			}
-			else if (action == "back")
-			{
-				this.onSaveFormButtonBackClick();
 			}
 		},
 		onSaveFormButtonSaveClick: function()
