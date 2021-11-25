@@ -211,6 +211,17 @@ export class CrudState
 	
 	
 	/**
+	 * Returns if item is action
+	 */
+	setActiveItem(item: CrudItem | null)
+	{
+		this.active_item = (item) ? deepClone(item) : null;
+		this.active_item_pk = (item) ? this.getPrimaryKeyFromItem(item) : null;
+	}
+	
+	
+	
+	/**
 	 * Returns api object name
 	 */
 	static getApiObjectName()
