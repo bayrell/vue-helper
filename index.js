@@ -187,6 +187,11 @@ export const mixin =
 		{
 			return getModel(this);
 		},
+		changeModel(keys, new_value)
+		{
+			let model = getModel(this);
+			setAttr(model, keys, new_value);
+		},
 		getState()
 		{
 			return this.$store.state;

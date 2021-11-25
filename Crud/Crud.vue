@@ -54,6 +54,9 @@
 		background-color: $color_table_selected;
 		color: white;
 	}
+	&_save_back{
+		margin-bottom: 10px;
+	}
 	.buttons button{
 		margin-left: 2px;
 		margin-right: 2px;
@@ -181,11 +184,15 @@
 		</div>
 		
 		<div class="component_crud_save" v-if="action == 'edit' || action == 'add'">
+			<slot name="component_crud_save_back">
+				<div class="component_crud_save_back">
+					<Button type="primary" @click="onDialogFormButtonClick('back')">Back</Button>
+				</div>
+			</slot>
 			<slot name="component_crud_save">
 				<Form v-bind:store_path="store_path.concat('form_save')">
 					<template v-slot:buttons>
 						<Button type="primary" @click="onDialogFormButtonClick('save')">Save</Button>
-						<Button type="" @click="onDialogFormButtonClick('cancel')">Cancel</Button>
 					</template>
 				</Form>
 			</slot>
@@ -269,6 +276,10 @@ export const Crud =
 			{
 				this.onDeleteFormButtonNoClick();
 			}
+			else if (action == "back")
+			{
+				this.onSaveFormButtonBackClick();
+			}
 		},
 		onSaveFormButtonSaveClick: function()
 		{
@@ -298,6 +309,10 @@ export const Crud =
 					this.$router.push({ name: route_names.list });
 				}
 			}
+		},
+		onSaveFormButtonBackClick: function()
+		{
+			this.onSaveFormButtonCancelClick();
 		},
 		onDeleteFormButtonYesClick: function()
 		{
