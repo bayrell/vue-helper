@@ -342,7 +342,7 @@ export class CrudState
 	/**
 	 * Get primary key
 	 */
-	getPrimaryKeyFromItem(item:CrudItem): Record<string, any>
+	getPrimaryKeyFromItem(item:any): Record<string, any>
 	{
 		let pk: Record<string, any> = {};
 		let pk_fields:Array<string> = this.getPrimaryKeyFields();
@@ -363,7 +363,7 @@ export class CrudState
 	/**
 	 * Find item
 	 */
-	findItemByPrimaryKey(item: CrudItem): number
+	findItemByPrimaryKey(item: any): number
 	{
 		let pk: Record<string, any> = this.getPrimaryKeyFromItem(item);
 		let index = this.items.findIndex
