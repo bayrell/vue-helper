@@ -636,10 +636,33 @@ export class CrudState
 	
 	
 	/**
+	 * Before api
+	 */
+	static async beforeApi(model: CrudState, kind: string): Promise<boolean>
+	{
+		return true;
+	}
+	
+	
+	
+	/**
+	 * After api
+	 */
+	static async afterApi(model: CrudState, kind: string, response:AxiosResponse | null)
+	{
+		
+	}
+	
+	
+	
+	/**
 	 * List Page Load data
 	 */
 	static async listPageLoadData(model: CrudState, route: any)
 	{
+		let res:boolean = await this.beforeApi(model, "listPageLoadData");
+		if (!res) return;
+		
 		/* Set page title */
 		let page_title = this.getMessage("list_title", null);
 		route.setPageTitle(page_title);
@@ -653,6 +676,8 @@ export class CrudState
 		{
 			model.addItems(response.data.result.items);
 		}
+		
+		await this.afterApi(model, "listPageLoadData", response);
 	}
 	
 	
@@ -676,6 +701,9 @@ export class CrudState
 	 */
 	static async editPageLoadData(model: CrudState, route: any)
 	{
+		let res:boolean = await this.beforeApi(model, "editPageLoadData");
+		if (!res) return;
+		
 		/* Set page title */
 		let page_title = this.getMessage("edit_title", null);
 		route.setPageTitle(page_title);
@@ -684,6 +712,8 @@ export class CrudState
 		let response:AxiosResponse | null = await this.apiLoadItem(route.to.params.id);
 		
 		model.form_save.setLoadResponse(response);
+		
+		await this.afterApi(model, "editPageLoadData", response);
 	}
 	
 	
@@ -709,6 +739,9 @@ export class CrudState
 		let item:CrudItem = model.form_save.item as CrudItem;
 		let item_original:CrudItem = model.form_save.item_original as CrudItem;
 		
+		let res:boolean = await this.beforeApi(model, "onSaveForm");
+		if (!res) return;
+		
 		model.form_save.setWaitResponse();
 		let response:AxiosResponse | null = await this.apiSaveForm(item, item_original);
 		model.form_save.setAxiosResponse(response);
@@ -732,6 +765,8 @@ export class CrudState
 				model.dialog_form.hide();
 			}
 		}
+		
+		await this.afterApi(model, "onSaveForm", response);
 	}
 	
 	
@@ -744,6 +779,9 @@ export class CrudState
 		let model:CrudState = component.model;
 		let item:CrudItem = model.dialog_delete.item as CrudItem;
 		
+		let res:boolean = await this.beforeApi(model, "onDeleteForm");
+		if (!res) return;
+		
 		model.dialog_delete.setWaitResponse();
 		let response:AxiosResponse | null = await this.apiDeleteForm(item);
 		model.dialog_delete.setAxiosResponse(response);
@@ -753,6 +791,8 @@ export class CrudState
 			model.deleteItem(item);
 			model.dialog_delete.hide();
 		}
+		
+		await this.afterApi(model, "onDeleteForm", response);
 	}
 	
 	

@@ -25,6 +25,17 @@
 import { createStore, Store } from "vuex";
 
 
+
+/**
+ * is not null
+ */
+export function isNotNull(value)
+{
+	return value != undefined && value != null && value != "";
+}
+
+
+
 /**
  * Returns VueJS model
  */
