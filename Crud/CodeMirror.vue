@@ -43,6 +43,9 @@ component_codemirror_textarea{
 
 import _CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/htmlmixed/htmlmixed.js';
+import 'codemirror/mode/xml/xml.js';
+import 'codemirror/mode/yaml/yaml.js';
 import { defineComponent } from 'vue';
 import { mixin, componentExtend, attr } from 'vue-helper';
 import { CrudEvent, CRUD_EVENTS } from "./CrudState";
@@ -95,13 +98,16 @@ export const CodeMirror =
 	},
 	mounted: function()
 	{
+		/* Set mode */
+		let mode = attr(this, ["crud", "field", "component_params", "mode"], "htmlmixed");
+		
 		this.instance = _CodeMirror.fromTextArea
 		(
 			this.$refs.input,
 			{
 				lineNumbers: true,
 				lineWrapping: true,
-				mode: "htmlmixed",
+				mode: mode,
 				matchBrackets: true,
 				tabSize: 2,
 			}
