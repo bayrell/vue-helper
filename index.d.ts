@@ -27,6 +27,8 @@ export function isNotNull(obj: any): any;
 
 export function attr(obj: any, keys: any, default_value: any): any;
 
+export function setAttr(obj: any, keys: any, new_value: any): any;
+
 export function onRouteUpdate(kind: string, to: any, from: any, next: any): any;
 
 export function componentExtend(child: any, parent: any): any;

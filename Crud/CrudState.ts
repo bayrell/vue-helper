@@ -24,7 +24,7 @@
 
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { DefineComponent } from "vue";
-import { BaseObject, deepClone, objContains, objEquals } from "vue-helper";
+import { attr, BaseObject, deepClone, objContains, objEquals } from "vue-helper";
 import { DialogState } from "./DialogState";
 import { FormState } from "./FormState";
 
@@ -465,8 +465,9 @@ export class CrudState
 	getItemValue(index: number, api_name: string): any
 	{
 		if (this.items[index] == undefined) return "";
-		if ((this.items[index] as any)[api_name] == undefined) return "";
-		return (this.items[index] as any)[api_name];
+		let item: any = this.items[index];
+		let arr: Array<string> = api_name.split(".");
+		return attr(item, arr, "");
 	}
 	
 	

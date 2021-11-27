@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { BaseObject, deepClone } from "vue-helper";
+import { attr, BaseObject, deepClone, setAttr } from "vue-helper";
 import { CrudState, FieldInfo } from "./CrudState";
 import { AxiosResponse } from "axios";
 
@@ -67,9 +67,10 @@ export class FormState extends BaseObject
 	 */
 	getItemValue(api_name: string): any
 	{
-		if (this.item && this.item[api_name] != undefined)
+		if (this.item)
 		{
-			return this.item[api_name];
+			let arr: Array<string> = api_name.split(".");
+			return attr(this.item, arr, "");
 		}
 		return "";
 	}
@@ -81,7 +82,8 @@ export class FormState extends BaseObject
 	 */
 	setItemValue(api_name: string, value: string)
 	{
-		this.item[api_name] = value;
+		let arr: Array<string> = api_name.split(".");
+		setAttr(this.item, arr, value);
 	}
 	
 	

@@ -134,7 +134,6 @@
 									v-bind:crud="{
 										action: action,
 										route_names: route_names,
-										store_path: store_path,
 										index: item_index,
 										item: item,
 										field: field,
