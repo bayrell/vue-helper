@@ -29,11 +29,10 @@ import { createStore, Store } from "vuex";
 /**
  * is not null
  */
-export function isNotNull(value)
+export function notNull(value)
 {
 	return value != undefined && value != null && value != "";
 }
-
 
 
 /**
@@ -225,12 +224,53 @@ export class BaseObject
 {
 	
 	/**
+	 * Constructor
+	 */
+	constructor(params)
+	{
+		this.init(params);
+	}
+	
+	
+	
+	/**
+	 * Init class
+	 */
+	init(params)
+	{
+		this.assignValues(params);
+	}
+	
+	
+	
+	/**
 	 * Assign values
 	 */
 	assignValues(params)
 	{
+		if (notNull(params))
+		{
+			for (var key in params)
+			{
+				if (params[key] !== undefined)
+				{
+					this[key] = this.convertValue(key, params[key]);
+				}
+			}
+		}
 		return this;
 	}
+	
+	
+	
+	/**
+	 * Convert value
+	 */
+	convertValue(key, value)
+	{
+		return value;
+	}
+	
 	
 	
 	/**
@@ -238,7 +278,15 @@ export class BaseObject
 	 */
 	getValues()
 	{
-		return {};
+		let res = {};
+		for (var key in this)
+		{
+			if (this[key] !== undefined)
+			{
+				res[key] = this[key];
+			}
+		}
+		return res;
 	}
 }
 

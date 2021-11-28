@@ -41,9 +41,28 @@
 			v-for="button in crud.field.component_params.buttons"
 			:key="button.action"
 		>
-			<Button v-bind:type="button.type" small="true" @click="onButtonClick(button.action)">
-				{{ button.label }}
-			</Button>
+			
+			<div class="component_row_button" v-if="notNull(button.route)">
+				<router-link custom
+					:to="{ name: button.route, params: { id: getItemId() }}"
+					v-slot="{ href, navigate, route }"
+				>
+					<a :href="href" @click="navigate" class="nolink"
+						v-bind:data-route-name="route.name"
+					>
+						<Button type="default" small="true">Edit</Button>
+					</a>
+				</router-link>
+			</div>
+			
+			<div class="component_row_button" v-else>
+				<Button
+					v-bind:type="button.type" small="true"
+					@click="onButtonClick(button.action)"
+				>
+					{{ button.label }}
+				</Button>
+			</div>
 		</div>
 		
 	</div>
@@ -80,7 +99,7 @@
 
 import Button from "./Button";
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, deepClone } from 'vue-helper';
+import { mixin, componentExtend, deepClone, notNull } from 'vue-helper';
 import { CrudEvent, CRUD_EVENTS } from "./CrudState";
 import { Field } from './Field.vue';
 
@@ -96,6 +115,7 @@ export const RowButtons =
 	},
 	methods:
 	{
+		notNull,
 		getItemId: function()
 		{
 			let id = this.crud.model.constructor.getItemId(this.crud.item);

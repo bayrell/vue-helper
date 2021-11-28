@@ -37,31 +37,18 @@ export class DialogButton extends BaseObject
     label: string = "";
     type: string = "";
 	
-    
-    /**
-	 * From object
-	 */
-	assignValues(params:Record<string, any>): DialogButton
-	{
-		this.action = String(params["action"] || this.action);
-		this.label = String(params["label"] || this.label);
-		this.type = String(params["type"] || this.type);
-		super.assignValues(params);
-		return this;
-	}
-	
 	
 	/**
-	 * Returns values
+	 * Convert value
 	 */
-	getValues(): Record<string, any>
+	convertValue(key:string, value:any)
 	{
-		return {
-			"action": this.action,
-			"label": this.label,
-			"type": this.type,
-		};
+		if (key == "action") return String(value);
+		if (key == "label") return String(value);
+		if (key == "type") return String(value);
+		return super.convertValue(key, value);
 	}
+	
 }
 
 export class DialogState extends BaseObject
@@ -73,6 +60,18 @@ export class DialogState extends BaseObject
 	message: string = "";
 	tag: any = null;
 	item: Record<string, any> = {};
+	
+	
+	/**
+	 * Convert value
+	 */
+	convertValue(key:string, value:any)
+	{
+		if (key == "open") return Boolean(value);
+		if (key == "title") return String(value);
+		return super.convertValue(key, value);
+	}
+	
 	
 	
     /**
@@ -92,33 +91,6 @@ export class DialogState extends BaseObject
 		this.open = false;
 	}
     
-    
-    /**
-	 * From object
-	 */
-	assignValues(params:Record<string, any>): DialogState
-	{
-		this.open = Boolean(params["open"] || this.open);
-		this.title = String(params["title"] || this.title);
-		this.buttons = params["buttons"] || this.buttons;
-		super.assignValues(params);
-		return this;
-	}
-	
-    
-	
-	/**
-	 * Returns values
-	 */
-	getValues(): Record<string, any>
-	{
-		return {
-			"open": this.open,
-			"title": this.title,
-			"buttons": this.buttons,
-		};
-	}
-	
 	
 	
 	/**

@@ -57,28 +57,15 @@ export class SelectOption extends BaseObject
 	value: string = "";
 	
 	/**
-	 * From object
+	 * Convert value
 	 */
-	assignValues(params:Record<string, any>): SelectOption
+	convertValue(key:string, value:any)
 	{
-		this.id = String(params["id"] || this.id);
-		this.value = String(params["value"] || this.value);
-		super.assignValues(params);
-		return this;
+		if (key == "id") return String(value);
+		if (key == "value") return String(value);
+		return super.convertValue(key, value);
 	}
 	
-	
-	/**
-	 * Returns values
-	 */
-	getValues(): Record<string, any>
-	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"id": this.id,
-			"value": this.value,
-		});
-	}
 }
 
 
@@ -104,31 +91,18 @@ export class FieldInfo extends BaseObject
 	/* Component params */
     component_params: Record<string, any> = {};
 	
-	/**
-	 * From object
-	 */
-	assignValues(params:Record<string, any>): FieldInfo
-	{
-		this.api_name = String(params["api_name"] || this.api_name);
-		this.label = String(params["label"] || this.label);
-		this.component = String(params["component"] || this.component);
-		super.assignValues(params);
-		return this;
-	}
-	
 	
 	/**
-	 * Returns values
+	 * Convert value
 	 */
-	getValues(): Record<string, any>
+	convertValue(key:string, value:any)
 	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"api_name": this.api_name,
-			"label": this.label,
-			"component": this.component,
-		});
+		if (key == "api_name") return String(value);
+		if (key == "label") return String(value);
+		if (key == "component") return String(value);
+		return super.convertValue(key, value);
 	}
+	
 }
 
 
@@ -137,32 +111,18 @@ export class CrudButton extends BaseObject
 	action: string = "";
 	label: string = "";
 	type: string = "";
+	route: string = "";
 	
 	
 	/**
-	 * From object
+	 * Convert value
 	 */
-	assignValues(params:Record<string, any>): CrudButton
+	convertValue(key:string, value:any)
 	{
-		this.action = String(params["action"] || this.action);
-		this.label = String(params["label"] || this.label);
-		this.type = String(params["type"] || this.type);
-		super.assignValues(params);
-		return this;
-	}
-	
-	
-	/**
-	 * Returns values
-	 */
-	getValues(): Record<string, any>
-	{
-		let res: Record<string, any> = super.getValues();
-		return Object.assign(res, {
-			"action": this.action,
-			"label": this.label,
-			"type": this.type,
-		});
+		if (key == "action") return String(value);
+		if (key == "label") return String(value);
+		if (key == "type") return String(value);
+		return super.convertValue(key, value);
 	}
 }
 
@@ -174,22 +134,40 @@ export class CrudItem extends BaseObject
 }
 
 
-export class CrudState
+export class CrudState extends BaseObject
 {
-	page_action: string = "";
-	fields: Array<FieldInfo> = [];
-	fields_table: Array<FieldInfo> = [];
-	items: Array<CrudItem> = new Array<CrudItem>();
-	form_save: FormState = new FormState();
-	dialog_delete: DialogState = new DialogState();
-	dialog_form: DialogState = new DialogState();
-	active_item: CrudItem | null = null;
-	active_item_pk: Record<string, any> | null = null;
+	page_action: string;
+	fields: Array<FieldInfo>;
+	fields_table: Array<FieldInfo>;
+	items: Array<CrudItem>;
+	form_save: FormState;
+	dialog_delete: DialogState;
+	dialog_form: DialogState;
+	active_item: CrudItem | null;
+	active_item_pk: Record<string, any> | null;
 	
 	
 	
-	constructor()
+	/**
+	 * Init
+	 */
+	init(params:any)
 	{
+		/* Init variables */
+		this.page_action = "";
+		this.fields = [];
+		this.fields_table = [];
+		this.items = new Array<CrudItem>();
+		this.form_save = new FormState();
+		this.dialog_delete = new DialogState();
+		this.dialog_form = new DialogState();
+		this.active_item = null;
+		this.active_item_pk = null;
+		
+		/* Init class */
+		super.init(params);
+		
+		/* Crud init */
 		this.crudInit();
 	}
 	

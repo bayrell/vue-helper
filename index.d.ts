@@ -3,8 +3,10 @@
 export class BaseObject {
     constructor();
 
+    constructor(params: any);
+    init(params: any): any;
+    convertValue(key: string, value: any): any
     assignValues(params: any): any;
-
     getValues(): any;
 
 }
@@ -23,7 +25,7 @@ export const mixin: {
     };
 };
 
-export function isNotNull(obj: any): any;
+export function notNull(obj: any): any;
 
 export function attr(obj: any, keys: any, default_value: any): any;
 

@@ -39,25 +39,11 @@ export class FormState extends BaseObject
 	
 	
 	/**
-	 * From object
+	 * Convert value
 	 */
-	assignValues(params:Record<string, any>): FormState
+	convertValue(key:string, value:any)
 	{
-		this.fields = params["fields"] || this.fields;
-		super.assignValues(params);
-		return this;
-	}
-	
-	
-	
-	/**
-	 * Returns values
-	 */
-	getValues(): Record<string, any>
-	{
-		return {
-			"fields": this.fields,
-		};
+		return super.convertValue(key, value);
 	}
 	
 	
