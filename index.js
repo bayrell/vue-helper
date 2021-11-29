@@ -146,15 +146,15 @@ export async function onRouteUpdate(kind, to, from, next)
 			component,
 			setPageTitle,
 		};
-		if (typeof model.constructor.onRouteUpdate == 'function')
+		if (typeof model.onRouteUpdate == 'function')
 		{
-			await model.constructor.onRouteUpdate(model, route);
+			await model.onRouteUpdate(route);
 		}
-		else if (typeof model.constructor.pageLoadData == 'function')
+		else if (typeof model.pageLoadData == 'function')
 		{
 			if (route.kind == "beforeRouteEnter" || route.kind == "beforeRouteUpdate")
 			{
-				await model.constructor.pageLoadData(model, route);
+				await model.pageLoadData(route);
 			}
 			next();
 		}
@@ -254,7 +254,7 @@ export class BaseObject
 			{
 				if (params[key] !== undefined)
 				{
-					this[key] = this.convertValue(key, params[key]);
+					this.assignValue(key, params[key]);
 				}
 			}
 		}
@@ -264,11 +264,11 @@ export class BaseObject
 	
 	
 	/**
-	 * Convert value
+	 * Assign value
 	 */
-	convertValue(key, value)
+	assignValue(key, value)
 	{
-		return value;
+		this[key] = value;
 	}
 	
 	

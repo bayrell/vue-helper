@@ -5,7 +5,7 @@ export class BaseObject {
 
     constructor(params: any);
     init(params: any): any;
-    convertValue(key: string, value: any): any
+    assignValue(key: string, value: any): any
     assignValues(params: any): any;
     getValues(): any;
 

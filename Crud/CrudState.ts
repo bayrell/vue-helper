@@ -53,17 +53,32 @@ export class CrudEvent
 
 export class SelectOption extends BaseObject
 {
-	id: string = "";
-	value: string = "";
+	id: string;
+	value: string;
+	
 	
 	/**
-	 * Convert value
+	 * Init
 	 */
-	convertValue(key:string, value:any)
+	init(params:any)
 	{
-		if (key == "id") return String(value);
-		if (key == "value") return String(value);
-		return super.convertValue(key, value);
+		/* Init variables */
+		this.id = "";
+		this.value = "";
+		
+		/* Init class */
+		super.init(params);
+	}
+	
+	
+	/**
+	 * Assign value
+	 */
+	assignValue(key:string, value:any)
+	{
+		if (key == "id") this.id = String(value);
+		else if (key == "value") this.value = String(value);
+		else super.assignValue(key, value);
 	}
 	
 }
@@ -71,36 +86,69 @@ export class SelectOption extends BaseObject
 
 export class FieldInfo extends BaseObject
 {
-	api_name: string = "";
-	label: string = "";
-	component: any = null;
+	api_name: string;
+	label: string;
+	component: any;
 	
 	/* Flags */
-	primary: boolean = false;
-	required: boolean = false;
-	readonly: boolean = false;
-	virtual: boolean = false;
-	can_create: boolean = true;
-	can_update: boolean = true;
-	group: string = "default";
-	default_val: any = null;
+	primary: boolean;
+	required: boolean;
+	readonly: boolean;
+	virtual: boolean;
+	can_create: boolean;
+	can_update: boolean;
+	group: string;
+	default_val: any;
 	
 	/* Select options */
-	options: Array<SelectOption> = [];
+	options: Array<SelectOption>;
 	
 	/* Component params */
-    component_params: Record<string, any> = {};
+    component_params: Record<string, any>;
+	
 	
 	
 	/**
-	 * Convert value
+	 * Init
 	 */
-	convertValue(key:string, value:any)
+	init(params:any)
 	{
-		if (key == "api_name") return String(value);
-		if (key == "label") return String(value);
-		if (key == "component") return String(value);
-		return super.convertValue(key, value);
+		/* Init variables */
+		this.api_name = "";
+		this.label = "";
+		this.component = null;
+		
+		/* Flags */
+		this.primary = false;
+		this.required = false;
+		this.readonly = false;
+		this.virtual = false;
+		this.can_create = true;
+		this.can_update = true;
+		this.group = "default";
+		this.default_val = null;
+		
+		/* Select options */
+		this.options = [];
+		
+		/* Component params */
+		this.component_params = {};
+		
+		/* Init class */
+		super.init(params);
+	}
+	
+	
+	
+	/**
+	 * Assign value
+	 */
+	assignValue(key:string, value:any)
+	{
+		if (key == "api_name") this.api_name = String(value);
+		else if (key == "label") this.label = String(value);
+		else if (key == "component") this.component = String(value);
+		else super.assignValue(key, value);
 	}
 	
 }
@@ -108,21 +156,37 @@ export class FieldInfo extends BaseObject
 
 export class CrudButton extends BaseObject
 {
-	action: string = "";
-	label: string = "";
-	type: string = "";
-	route: string = "";
+	action: string;
+	label: string;
+	type: string;
+	route: string;
+	
+	
+	/**
+	 * Init
+	 */
+	init(params:any)
+	{
+		/* Init variables */
+		this.action = "";
+		this.label = "";
+		this.type = "";
+		this.route = "";
+		
+		/* Init class */
+		super.init(params);
+	}
 	
 	
 	/**
 	 * Convert value
 	 */
-	convertValue(key:string, value:any)
+	assignValue(key:string, value:any)
 	{
-		if (key == "action") return String(value);
-		if (key == "label") return String(value);
-		if (key == "type") return String(value);
-		return super.convertValue(key, value);
+		if (key == "action") this.action = String(value);
+		else if (key == "label") this.label = String(value);
+		else if (key == "type") this.type = String(value);
+		else super.assignValue(key, value);
 	}
 }
 
@@ -587,28 +651,28 @@ export class CrudState extends BaseObject
 	/**
 	 * Page data
 	 */
-	static async pageLoadData(model: CrudState, route: any)
+	async pageLoadData(route: any)
 	{
-		model.setPageAction(route.props.action);
+		this.setPageAction(route.props.action);
 		
-		if (model.page_action == "list")
+		if (this.page_action == "list")
 		{
-			await this.listPageLoadData(model, route);
+			await this.listPageLoadData(route);
 		}
 		
-		else if (model.page_action == "add")
+		else if (this.page_action == "add")
 		{
-			await this.addPageLoadData(model, route);
+			await this.addPageLoadData(route);
 		}
 		
-		else if (model.page_action == "edit")
+		else if (this.page_action == "edit")
 		{
-			await this.editPageLoadData(model, route);
+			await this.editPageLoadData(route);
 		}
 		
-		else if (model.page_action == "delete")
+		else if (this.page_action == "delete")
 		{
-			await this.deletePageLoadData(model, route);
+			await this.deletePageLoadData(route);
 		}
 	}
 	
@@ -617,7 +681,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Before api
 	 */
-	static async beforeApi(model: CrudState, kind: string): Promise<boolean>
+	async beforeApi(kind: string): Promise<boolean>
 	{
 		return true;
 	}
@@ -627,7 +691,7 @@ export class CrudState extends BaseObject
 	/**
 	 * After api
 	 */
-	static async afterApi(model: CrudState, kind: string, response:AxiosResponse | null)
+	async afterApi(kind: string, response:AxiosResponse | null)
 	{
 		
 	}
@@ -637,26 +701,26 @@ export class CrudState extends BaseObject
 	/**
 	 * List Page Load data
 	 */
-	static async listPageLoadData(model: CrudState, route: any)
+	async listPageLoadData(route: any)
 	{
-		let res:boolean = await this.beforeApi(model, "listPageLoadData");
+		let res:boolean = await this.beforeApi("listPageLoadData");
 		if (!res) return;
 		
 		/* Set page title */
-		let page_title = this.getMessage("list_title", null);
+		let page_title = (this.constructor as any).getMessage("list_title", null);
 		route.setPageTitle(page_title);
 		
 		/* Ajax request */
-		let response:AxiosResponse | null = await this.apiLoadData();
+		let response:AxiosResponse | null = await (this.constructor as any).apiLoadData();
 		
 		/* Set result */
-		model.items = new Array();
+		this.items = new Array();
 		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 		{
-			model.addItems(response.data.result.items);
+			this.addItems(response.data.result.items);
 		}
 		
-		await this.afterApi(model, "listPageLoadData", response);
+		await this.afterApi("listPageLoadData", response);
 	}
 	
 	
@@ -664,13 +728,13 @@ export class CrudState extends BaseObject
 	/**
 	 * Add Page Load data
 	 */
-	static async addPageLoadData(model: CrudState, route: any)
+	async addPageLoadData(route: any)
 	{
 		/* Set page title */
-		let page_title = this.getMessage("add_title", null);
+		let page_title = (this.constructor as any).getMessage("add_title", null);
 		route.setPageTitle(page_title);
 		
-		model.form_save.clear();
+		this.form_save.clear();
 	}
 	
 	
@@ -678,21 +742,22 @@ export class CrudState extends BaseObject
 	/**
 	 * Edit Page Load data
 	 */
-	static async editPageLoadData(model: CrudState, route: any)
+	async editPageLoadData(route: any)
 	{
-		let res:boolean = await this.beforeApi(model, "editPageLoadData");
+		let res:boolean = await this.beforeApi("editPageLoadData");
 		if (!res) return;
 		
 		/* Set page title */
-		let page_title = this.getMessage("edit_title", null);
+		let page_title = (this.constructor as any).getMessage("edit_title", null);
 		route.setPageTitle(page_title);
 		
 		/* Ajax request */
-		let response:AxiosResponse | null = await this.apiLoadItem(route.to.params.id);
+		let response:AxiosResponse | null = await (this.constructor as any)
+			.apiLoadItem(route.to.params.id);
 		
-		model.form_save.setLoadResponse(response);
+		this.form_save.setLoadResponse(response);
 		
-		await this.afterApi(model, "editPageLoadData", response);
+		await this.afterApi("editPageLoadData", response);
 	}
 	
 	
@@ -700,10 +765,10 @@ export class CrudState extends BaseObject
 	/**
 	 * Delete Page Load data
 	 */
-	static async deletePageLoadData(model: CrudState, route: any)
+	async deletePageLoadData(route: any)
 	{
 		/* Set page title */
-		let page_title = this.getMessage("delete_title", null);
+		let page_title = (this.constructor as any).getMessage("delete_title", null);
 		route.setPageTitle(page_title);
 	}
 	
@@ -712,17 +777,18 @@ export class CrudState extends BaseObject
 	/**
 	 * Save form
 	 */
-	static async onSaveForm(component: DefineComponent)
+	async doSaveForm(component: DefineComponent)
 	{
-		let model:CrudState = component.model;
+		let model:CrudState = this;
 		let item:CrudItem = model.form_save.item as CrudItem;
 		let item_original:CrudItem = model.form_save.item_original as CrudItem;
 		
-		let res:boolean = await this.beforeApi(model, "onSaveForm");
+		let res:boolean = await this.beforeApi( "onSaveForm");
 		if (!res) return;
 		
 		model.form_save.setWaitResponse();
-		let response:AxiosResponse | null = await this.apiSaveForm(item, item_original);
+		let response:AxiosResponse | null = await (this.constructor as any)
+			.apiSaveForm(item, item_original);
 		model.form_save.setAxiosResponse(response);
 		
 		if (item_original == null)
@@ -745,7 +811,7 @@ export class CrudState extends BaseObject
 			}
 		}
 		
-		await this.afterApi(model, "onSaveForm", response);
+		await this.afterApi("onSaveForm", response);
 	}
 	
 	
@@ -753,16 +819,16 @@ export class CrudState extends BaseObject
 	/**
 	 * Delete form
 	 */
-	static async onDeleteForm(component: DefineComponent)
+	async doDeleteForm(component: DefineComponent)
 	{
-		let model:CrudState = component.model;
+		let model:CrudState = this;
 		let item:CrudItem = model.dialog_delete.item as CrudItem;
 		
-		let res:boolean = await this.beforeApi(model, "onDeleteForm");
+		let res:boolean = await this.beforeApi("onDeleteForm");
 		if (!res) return;
 		
 		model.dialog_delete.setWaitResponse();
-		let response:AxiosResponse | null = await this.apiDeleteForm(item);
+		let response:AxiosResponse | null = await (this.constructor as any).apiDeleteForm(item);
 		model.dialog_delete.setAxiosResponse(response);
 		
 		if (item && response && typeof(response.data) == "object" && response.data.error.code == 1)
@@ -771,7 +837,7 @@ export class CrudState extends BaseObject
 			model.dialog_delete.hide();
 		}
 		
-		await this.afterApi(model, "onDeleteForm", response);
+		await this.afterApi("onDeleteForm", response);
 	}
 	
 	

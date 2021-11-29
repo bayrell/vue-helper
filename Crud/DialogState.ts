@@ -39,14 +39,14 @@ export class DialogButton extends BaseObject
 	
 	
 	/**
-	 * Convert value
+	 * Assign value
 	 */
-	convertValue(key:string, value:any)
+	assignValue(key:string, value:any)
 	{
 		if (key == "action") return String(value);
-		if (key == "label") return String(value);
-		if (key == "type") return String(value);
-		return super.convertValue(key, value);
+		else if (key == "label") return String(value);
+		else if (key == "type") return String(value);
+		else return super.assignValue(key, value);
 	}
 	
 }
@@ -63,13 +63,13 @@ export class DialogState extends BaseObject
 	
 	
 	/**
-	 * Convert value
+	 * Assign value
 	 */
-	convertValue(key:string, value:any)
+	assignValue(key:string, value:any)
 	{
-		if (key == "open") return Boolean(value);
-		if (key == "title") return String(value);
-		return super.convertValue(key, value);
+		if (key == "open") this.open = Boolean(value);
+		else if (key == "title") this.title = String(value);
+		else return super.assignValue(key, value);
 	}
 	
 	
@@ -82,6 +82,7 @@ export class DialogState extends BaseObject
 		this.open = true;
 	}
     
+	
     
     /**
 	 * Hide dialog
@@ -96,7 +97,7 @@ export class DialogState extends BaseObject
 	/**
 	 * Set item
 	 */
-	setItem(item: CrudState)
+	setItem(item: any)
 	{
 		if (item == null)
 		{

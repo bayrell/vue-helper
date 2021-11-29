@@ -39,11 +39,11 @@ export class FormState extends BaseObject
 	
 	
 	/**
-	 * Convert value
+	 * Assign value
 	 */
-	convertValue(key:string, value:any)
+	assignValue(key:string, value:any)
 	{
-		return super.convertValue(key, value);
+		super.assignValue(key, value);
 	}
 	
 	
@@ -77,7 +77,7 @@ export class FormState extends BaseObject
 	/**
 	 * Set item
 	 */
-	setItem(item: CrudState)
+	setItem(item: any)
 	{
 		if (item == null)
 		{

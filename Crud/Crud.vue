@@ -282,7 +282,7 @@ export const Crud =
 		},
 		onSaveFormButtonSaveClick: function()
 		{
-			this.model.constructor.onSaveForm(this);
+			this.model.doSaveForm();
 		},
 		onSaveFormButtonCancelClick: function()
 		{
@@ -315,7 +315,7 @@ export const Crud =
 		},
 		onDeleteFormButtonYesClick: function()
 		{
-			this.model.constructor.onDeleteForm(this);
+			this.model.doDeleteForm();
 		},
 		onDeleteFormButtonNoClick: function()
 		{
