@@ -53,13 +53,35 @@ export class DialogButton extends BaseObject
 
 export class DialogState extends BaseObject
 {
-    open: boolean = false;
-    title: string = "";
-    buttons: Array<DialogButton> = [];
-    error_code: number = 0;
-	message: string = "";
-	tag: any = null;
-	item: Record<string, any> = {};
+	open: boolean;
+	title: string;
+	buttons: Array<DialogButton>;
+	error_code: number;
+	message: string;
+	attrs: Record<string, any>;
+	tag: any;
+	item: Record<string, any>;
+	
+	
+	/**
+	 * Init
+	 */
+	init(params:any)
+	{
+		/* Init variables */
+		this.open = false;
+		this.title = "";
+		this.buttons = [];
+		this.error_code = 0;
+		this.message = "";
+		this.attrs = {};
+		this.tag = null;
+		this.item = {};
+		
+		/* Init class */
+		super.init(params);
+	}
+	
 	
 	
 	/**
@@ -69,7 +91,7 @@ export class DialogState extends BaseObject
 	{
 		if (key == "open") this.open = Boolean(value);
 		else if (key == "title") this.title = String(value);
-		else return super.assignValue(key, value);
+		else super.assignValue(key, value);
 	}
 	
 	

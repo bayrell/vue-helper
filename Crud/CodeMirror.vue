@@ -67,11 +67,9 @@ export const CodeMirror =
 			if (this.instance_created && this.new_value != newVal)
 			{
 				this.new_value = newVal;
-				setTimeout
-				(
-					() => { this.instance.getDoc().setValue(newVal); },
-					10
-				);
+				this.$nextTick(() => {
+					this.instance.getDoc().setValue(newVal);
+				});
 			}
 		},
 	},
