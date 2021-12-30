@@ -47,7 +47,7 @@ import 'codemirror/mode/htmlmixed/htmlmixed.js';
 import 'codemirror/mode/xml/xml.js';
 import 'codemirror/mode/yaml/yaml.js';
 import { defineComponent } from 'vue';
-import { mixin, componentExtend, attr } from 'vue-helper';
+import { mixin, componentExtend, attr, setAttr } from 'vue-helper';
 import { CrudEvent, CRUD_EVENTS } from "./CrudState";
 import { Field } from './Field.vue';
 
@@ -75,6 +75,11 @@ export const CodeMirror =
 	},
 	methods:
 	{
+		getCurrentValue: function()
+		{
+			if (this.store_path == undefined) return this.value;
+			return this.model;
+		},
 		onChange: function()
 		{
 			this.change_timer = null;
@@ -88,6 +93,10 @@ export const CodeMirror =
 				event.item_name = this.name;
 				event.value = value;
 				this.$emit( "crudEvent", event );
+			}
+			if (this.store_path != undefined)
+			{
+				setAttr(this.$store.state, this.store_path, value);
 			}
 		}
 	},
@@ -123,7 +132,7 @@ export const CodeMirror =
 		}
 		
 		/* Set value */
-		this.instance.getDoc().setValue(this.value);
+		this.instance.getDoc().setValue( this.getCurrentValue() );
 		
 		/* onChange */
 		this.instance.on("change", (function(obj, onChange){ return (code) => {
