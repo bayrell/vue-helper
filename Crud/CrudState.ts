@@ -795,8 +795,8 @@ export class CrudState extends BaseObject
 		{
 			if (response && response.data.error.code == 1)
 			{
-				model.form_save.setItem(response.data.result.item);
-				model.addItem(response.data.result.item);
+				model.form_save.setItem(response.data.result.new_data);
+				model.addItem(response.data.result.new_data);
 				model.dialog_form.hide();
 			}
 		}
@@ -805,8 +805,8 @@ export class CrudState extends BaseObject
 		{
 			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 			{
-				model.form_save.setItem(response.data.result.item);
-				model.updateItem(item_original, response.data.result.item);
+				model.form_save.setItem(response.data.result.new_data);
+				model.updateItem(item_original, response.data.result.new_data);
 				model.dialog_form.hide();
 			}
 		}
