@@ -98,7 +98,7 @@ export class FieldInfo extends BaseObject
 	can_create: boolean;
 	can_update: boolean;
 	group: string;
-	default_val: any;
+	default_value: any;
 	
 	/* Select options */
 	options: Array<SelectOption>;
@@ -126,7 +126,7 @@ export class FieldInfo extends BaseObject
 		this.can_create = true;
 		this.can_update = true;
 		this.group = "default";
-		this.default_val = null;
+		this.default_value = null;
 		
 		/* Select options */
 		this.options = [];
