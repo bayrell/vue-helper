@@ -81,7 +81,7 @@
 		
 		<slot name="crud_before"></slot>
 		
-		<div class="component_crud_list" v-if="action == undefined || action == 'list'">
+		<div class="component_crud_list" v-if="page_action == undefined || page_action == 'list'">
 		
 			<div class="component_crud__top_buttons">
 				<slot name="top_buttons">
@@ -132,7 +132,7 @@
 							>
 								<component v-bind:is="field.component"
 									v-bind:crud="{
-										action: action,
+										page_action: page_action,
 										route_names: route_names,
 										index: item_index,
 										item: item,
@@ -182,7 +182,7 @@
 			</slot>
 		</div>
 		
-		<div class="component_crud_save" v-if="action == 'edit' || action == 'add'">
+		<div class="component_crud_save" v-if="page_action == 'edit' || page_action == 'add'">
 			<slot name="component_crud_save_back">
 				<div class="component_crud_save_back">
 					<Button type="primary" @click="onDialogFormButtonClick('form_back')">Back</Button>
@@ -212,7 +212,7 @@ export const Crud =
 {
 	name: "Crud",
 	mixins: [ mixin ],
-	props: ["action"],
+	props: ["page_action"],
 	computed:
 	{
 		route_names: function()

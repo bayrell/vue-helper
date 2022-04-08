@@ -308,7 +308,8 @@ export class CrudState extends BaseObject
 	 */
 	static getApiUrlUpdate(item: CrudItem)
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" + encodeURIComponent(this.getItemId(item)) + "/";
+		return "/api/" + this.getApiObjectName() + "/crud/edit/" +
+			encodeURIComponent(this.getItemId(item)) + "/";
 	}
 	
 	
@@ -318,7 +319,8 @@ export class CrudState extends BaseObject
 	 */
 	static getApiUrlDelete(item: CrudItem)
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" + encodeURIComponent(this.getItemId(item)) + "/";
+		return "/api/" + this.getApiObjectName() + "/crud/delete/" +
+			encodeURIComponent(this.getItemId(item)) + "/";
 	}
 	
 	
@@ -630,15 +632,15 @@ export class CrudState extends BaseObject
 	/**
 	 * Set current crud action
 	 */
-	setPageAction(action: string)
+	setPageAction(page_action: string)
 	{
-		if (action == "add" ||
-			action == "edit" ||
-			action == "delete" ||
-			action == "list"
+		if (page_action == "add" ||
+			page_action == "edit" ||
+			page_action == "delete" ||
+			page_action == "list"
 		)
 		{
-			this.page_action = action;
+			this.page_action = page_action;
 		}
 		else
 		{
@@ -653,7 +655,7 @@ export class CrudState extends BaseObject
 	 */
 	async pageLoadData(route: any)
 	{
-		this.setPageAction(route.props.action);
+		this.setPageAction(route.props.page_action);
 		
 		if (this.page_action == "list")
 		{
@@ -793,7 +795,7 @@ export class CrudState extends BaseObject
 		
 		if (item_original == null)
 		{
-			if (response && response.data.error.code == 1)
+			if (response && model.form_save.error_code == 1)
 			{
 				model.form_save.setItem(response.data.result.new_data);
 				model.addItem(response.data.result.new_data);

@@ -148,7 +148,7 @@ export class FormState extends BaseObject
 		if (response)
 		{
 			let data: any = response.data;
-			if (typeof(data["error"]) == "object")
+			if (typeof(data) == "object" && typeof(data["error"]) == "object")
 			{
 				this.error_code = data["error"]["code"];
 				this.message = data["error"]["str"];
@@ -156,7 +156,7 @@ export class FormState extends BaseObject
 			else
 			{
 				this.error_code = -1;
-				this.message = "System error";
+				this.message = "System error (" + response.status + " " + response.statusText + ")";
 			}
 		}
 		else
