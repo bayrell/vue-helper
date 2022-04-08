@@ -635,12 +635,14 @@ export class CrudState extends BaseObject
 	setPageAction(page_action: string)
 	{
 		if (page_action == "add" ||
+			page_action == "create" ||
 			page_action == "edit" ||
 			page_action == "delete" ||
 			page_action == "list"
 		)
 		{
-			this.page_action = page_action;
+			if (page_action == "create") this.page_action = "add";
+			else this.page_action = page_action;
 		}
 		else
 		{
@@ -701,6 +703,20 @@ export class CrudState extends BaseObject
 	
 	
 	/**
+	 * Search data
+	 */
+	getSearchData(route: any)
+	{
+		return {
+			"filter": [],
+			"start": 0,
+			"limit": 50,
+		};
+	}
+	
+	
+	
+	/**
 	 * List Page Load data
 	 */
 	async listPageLoadData(route: any)
@@ -713,7 +729,8 @@ export class CrudState extends BaseObject
 		route.setPageTitle(page_title);
 		
 		/* Ajax request */
-		let response:AxiosResponse | null = await (this.constructor as any).apiLoadData();
+		let response:AxiosResponse | null = await (this.constructor as any)
+			.apiLoadData( this.getSearchData(route) );
 		
 		/* Set result */
 		this.items = new Array();
@@ -847,14 +864,18 @@ export class CrudState extends BaseObject
 	/**
 	 * Load data api
 	 */
-	static async apiLoadData(): Promise<AxiosResponse | null>
+	static async apiLoadData(data: any): Promise<AxiosResponse | null>
 	{
 		let url = this.getApiUrlSearch();
 		let response:AxiosResponse | null = null;
 		
 		try
 		{
-			response = await axios.get(url);
+			response = await axios.post
+			(
+				url,
+				data
+			);
 		}
 		catch (e)
 		{
@@ -908,7 +929,11 @@ export class CrudState extends BaseObject
 			
 			try
 			{
-				response = await axios.post(url, {"item": item});
+				response = await axios.post
+				(
+					url,
+					{ "item": item }
+				);
 			}
 			catch (e)
 			{
@@ -925,7 +950,11 @@ export class CrudState extends BaseObject
 			
 			try
 			{
-				response = await axios.post(url, {"item": item});
+				response = await axios.post
+				(
+					url,
+					{ "item": item }
+				);
 			}
 			catch (e)
 			{
