@@ -27,6 +27,8 @@ export const mixin: {
 
 export function notNull(obj: any): any;
 
+export function responseOk(response: any): boolean;
+
 export function attr(obj: any, keys: any, default_value: any): any;
 
 export function setAttr(obj: any, keys: any, new_value: any): any;

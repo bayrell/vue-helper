@@ -581,6 +581,48 @@ export class CrudState extends BaseObject
 	}
 	
 	
+	/**
+	 * Edit field
+	 */
+	editField(kind: Array<string>, field_name: string, f:any = null)
+	{
+		let fields: Array<FieldInfo> | null = null;
+		let arr: Array<string> = ["fields_table", "form_save", "fields"];
+		
+		for (let j=0; j<arr.length; j++)
+		{
+			let arr_name: string = arr[j];
+			if (kind.indexOf(arr_name) != -1 || kind.indexOf("all") != -1)
+			{
+				fields = null;
+				if (arr_name == "fields_table")
+				{
+					fields = this.fields_table;
+				}
+				else if (arr_name == "form_save")
+				{
+					fields = this.form_save.fields;
+				}
+				else if (arr_name == "fields")
+				{
+					fields = this.fields;
+				}
+				if (fields)
+				{
+					for (let i=0; i<fields.length; i++)
+					{
+						let field: FieldInfo = fields[i];
+						if (field.api_name == field_name)
+						{
+							f(field);
+						}
+					}
+				}
+			}
+		}
+
+	}
+	
 	
 	/**
 	 * Set form save item

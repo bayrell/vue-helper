@@ -140,7 +140,7 @@
 										model: model
 									}"
 									v-bind:value="model.getItemValue(item_index, field.api_name)"
-									@crudEvent="onCrudEvent($event)"
+									@crudEvent="onCrudComponentEvent($event)"
 								/>
 							</td>
 						</tr>
@@ -157,10 +157,14 @@
 						{{ model.constructor.getMessage("form_title", model.current_item) }}
 					</template>
 					<template v-slot:content>
-						<Form v-bind:store_path="store_path.concat('form_save')">
+						<Form v-bind:store_path="store_path.concat('form_save')"
+							@crudEvent="onCrudFormEvent($event, 'form_save')"
+						>
 							<template v-slot:buttons>
-								<Button type="primary" @click="onDialogFormButtonClick('form_save')">Save</Button>
-								<Button type="" @click="onDialogFormButtonClick('form_cancel')">Cancel</Button>
+								<Button type="primary"
+									@click="onDialogFormButtonClick('form_save')">Save</Button>
+								<Button type=""
+									@click="onDialogFormButtonClick('form_cancel')">Cancel</Button>
 							</template>
 						</Form>
 					</template>
@@ -189,9 +193,12 @@
 				</div>
 			</slot>
 			<slot name="component_crud_save">
-				<Form v-bind:store_path="store_path.concat('form_save')">
+				<Form v-bind:store_path="store_path.concat('form_save')"
+					@crudEvent="onCrudFormEvent($event, 'form_save')"
+				>
 					<template v-slot:buttons>
-						<Button type="primary" @click="onDialogFormButtonClick('form_save')">Save</Button>
+						<Button type="primary"
+							@click="onDialogFormButtonClick('form_save')">Save</Button>
 					</template>
 				</Form>
 			</slot>
@@ -231,7 +238,13 @@ export const Crud =
 			event.$event = $event;
 			this.$emit( "crudEvent", event );
 		},
-		onCrudEvent: function($event)
+		onCrudDialogEvent: function($event, dialog_name)
+		{
+		},
+		onCrudFormEvent: function($event, form_name)
+		{
+		},
+		onCrudComponentEvent: function($event)
 		{
 			if ($event.event_name == CRUD_EVENTS.ROW_BUTTON_CLICK)
 			{

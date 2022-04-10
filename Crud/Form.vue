@@ -119,6 +119,7 @@ import axios from "axios";
 export const Form =
 {
 	mixins: [ mixin ],
+	emits: ["crudEvent"],
 	props: [],
 	computed:
 	{
@@ -131,6 +132,7 @@ export const Form =
 			{
 				this.model.setItemValue($event.item_name, $event.value)
 			}
+			this.$emit( "crudEvent", $event );
 		},
 	},
 };

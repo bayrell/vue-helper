@@ -36,6 +36,18 @@ export function notNull(value)
 
 
 /**
+ * Returns true if response is ok
+ */
+export function responseOk(response)
+{
+	return response &&
+		typeof(response.data) == "object" &&
+		typeof(response.data.error) == "object" &&
+		response.data.error.code == 1;
+}
+
+
+/**
  * Returns VueJS model
  */
 export function getModel (instance)
