@@ -308,30 +308,7 @@ export class BaseObject
  */
 export function componentExtend(child, parent)
 {
-	const parent2 = Object.assign({}, parent);
-	
-	function assign(parent2, parent, child, attr_name)
-	{
-		if (child[attr_name] != undefined)
-		{
-			if (parent[attr_name] instanceof Array)
-			{
-				parent2[attr_name] = parent[attr_name].concat(child[attr_name]);
-				parent2[attr_name] = removeDuplicates(parent2[attr_name]);
-			}
-			else
-			{
-				parent2[attr_name] = Object.assign({}, parent[attr_name]);
-				parent2[attr_name] = Object.assign(parent2[attr_name], child[attr_name]);
-			}
-		}
-	}
-	
-	assign(parent2, parent, child, "methods");
-	assign(parent2, parent, child, "computed");
-	assign(parent2, parent, child, "components");
-	assign(parent2, parent, child, "emits");
-	assign(parent2, parent, child, "props");
+	let parent2 = Object.assign({}, parent);
 	
 	function copy(parent, child, attr_name)
 	{
@@ -343,13 +320,32 @@ export function componentExtend(child, parent)
 			}
 			else if (child[attr_name] instanceof Array)
 			{
-				parent[attr_name] = parent[attr_name].concat(child[attr_name]);
-				parent[attr_name] = removeDuplicates(parent[attr_name]);
+				let arr = parent[attr_name].concat(child[attr_name]);
+				arr = removeDuplicates(arr);
+				child[attr_name] = arr;
+			}
+		}
+		else if (parent[attr_name] != undefined && parent[attr_name] instanceof Object)
+		{
+			if (child[attr_name] == undefined)
+			{
+				child[attr_name] = Object.assign({}, parent[attr_name]);
+			}
+			else if (child[attr_name] instanceof Object)
+			{
+				let obj = Object.assign({}, parent[attr_name]);
+				obj = Object.assign(obj, child[attr_name]);
+				child[attr_name] = obj;
 			}
 		}
 	}
 	
-	/* Copy props to child */
+	/* Copy props from parent to child */
+	copy(parent, child, "methods");
+	copy(parent, child, "computed");
+	copy(parent, child, "components");
+	copy(parent, child, "emits");
+	copy(parent, child, "props");
 	copy(parent, child, "props");
 	copy(parent, child, "emits");
 	
@@ -368,6 +364,8 @@ export function componentExtend(child, parent)
 		"errorCaptured",
 		"renderTracked",
 		"renderTriggered",
+		"beforeRouteEnter",
+		"beforeRouteUpdate",
 	];
 	
 	for (let i=0; i<events.length; i++)

@@ -23,6 +23,9 @@
 -->
 
 <style lang="scss">
+.components_tabs__content{
+	padding: 10px 0px;
+}
 </style>
 
 
@@ -43,7 +46,7 @@ export const Tab =
 	mixins: [ mixin ],
 	props: {
         name: { required: true },
-        selected: { default: false}
+        selected: { default: false }
     },
 	methods:{
 		getSelectedTab: function(){

@@ -24,7 +24,7 @@
 
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { DefineComponent } from "vue";
-import { attr, BaseObject, deepClone, objContains, objEquals } from "vue-helper";
+import { attr, BaseObject, deepClone, notNull, objContains, objEquals, responseOk } from "vue-helper";
 import { DialogState } from "./DialogState";
 import { FormState } from "./FormState";
 
@@ -209,7 +209,7 @@ export class CrudState extends BaseObject
 	dialog_form: DialogState;
 	active_item: CrudItem | null;
 	active_item_pk: Record<string, any> | null;
-	
+	dictionary: any;
 	
 	
 	/**
@@ -227,6 +227,7 @@ export class CrudState extends BaseObject
 		this.dialog_form = new DialogState();
 		this.active_item = null;
 		this.active_item_pk = null;
+		this.dictionary = null;
 		
 		/* Init class */
 		super.init(params);
@@ -584,7 +585,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Edit field
 	 */
-	editField(kind: Array<string>, field_name: string, f:any = null)
+	editField(kind: Array<string>, field_name: string, callback:any = null)
 	{
 		let fields: Array<FieldInfo> | null = null;
 		let arr: Array<string> = ["fields_table", "form_save", "fields"];
@@ -614,7 +615,7 @@ export class CrudState extends BaseObject
 						let field: FieldInfo = fields[i];
 						if (field.api_name == field_name)
 						{
-							f(field);
+							callback(field);
 						}
 					}
 				}
@@ -622,6 +623,45 @@ export class CrudState extends BaseObject
 		}
 
 	}
+	
+	
+	
+	/**
+	 * Read dictionary
+	 */
+	readDictionary
+	(
+		response:AxiosResponse | null,
+		kind: Array<string>,
+		field_name: string,
+		dictionary_name:string,
+		callback:any = null
+	)
+	{
+		if (response && responseOk(response) &&
+			notNull(response.data) &&
+			notNull(response.data.result) &&
+			notNull(response.data.result.dictionary) &&
+			notNull(response.data.result.dictionary[dictionary_name]) &&
+			response.data.result.dictionary[dictionary_name] instanceof Array
+		)
+		{
+			let options: Array<SelectOption> = response.data.
+				result.dictionary[dictionary_name]
+				.map(callback)
+			;
+			this.editField
+			(
+				kind,
+				field_name,
+				(field: FieldInfo) =>
+				{
+					field.options = deepClone(options);
+				}
+			);
+		}
+	}
+	
 	
 	
 	/**
@@ -739,7 +779,13 @@ export class CrudState extends BaseObject
 	 */
 	async afterApi(kind: string, response:AxiosResponse | null)
 	{
-		
+		if (response &&
+			responseOk(response) &&
+			["listPageLoadData", "editPageLoadData"].indexOf(kind) >= 0
+		)
+		{
+			this.dictionary = response.data.result.dictionary;
+		}
 	}
 	
 	

@@ -131,7 +131,8 @@
 				
 				<div class="component_dialog__result">
 					<slot name="result">
-						<div class="component_dialog__result_message" v-if="model.message != ''"
+						<div class="component_dialog__result_message"
+							v-if="model.message != ''"
 							v-bind:class="{
 								error: model.error_code < 0,
 								success: model.error_code > 0,
