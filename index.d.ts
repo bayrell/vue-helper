@@ -25,7 +25,9 @@ export const mixin: {
     };
 };
 
-export function notNull(obj: any): any;
+export function notNull(obj: any): boolean;
+
+export function isNull(obj: any): boolean;
 
 export function responseOk(response: any): boolean;
 

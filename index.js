@@ -35,6 +35,17 @@ export function notNull(value)
 }
 
 
+
+/**
+ * is not null
+ */
+export function isNull(value)
+{
+	return value == undefined || value == null || value == "";
+}
+
+
+
 /**
  * Returns true if response is ok
  */
