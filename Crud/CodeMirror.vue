@@ -107,6 +107,7 @@ export const CodeMirror =
 	{
 		/* Set mode */
 		let mode = attr(this, ["crud", "field", "component_params", "mode"], "htmlmixed");
+		let readOnly = attr(this, ["crud", "field", "component_params", "readOnly"], false);
 		
 		this.instance = _CodeMirror.fromTextArea
 		(
@@ -116,6 +117,7 @@ export const CodeMirror =
 				lineWrapping: true,
 				mode: mode,
 				matchBrackets: true,
+				readOnly: readOnly,
 				tabSize: 2,
 			}
 		);
