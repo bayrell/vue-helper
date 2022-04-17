@@ -321,7 +321,7 @@ export function componentExtend(child, parent)
 {
 	let parent2 = Object.assign({}, parent);
 	
-	function copy(parent, child, attr_name)
+	function copy(parent, child, attr_name, parent2)
 	{
 		if (parent[attr_name] != undefined && parent[attr_name] instanceof Array)
 		{
@@ -335,6 +335,8 @@ export function componentExtend(child, parent)
 				arr = removeDuplicates(arr);
 				child[attr_name] = arr;
 			}
+			
+			parent2[attr_name] = child[attr_name].slice();
 		}
 		else if (parent[attr_name] != undefined && parent[attr_name] instanceof Object)
 		{
@@ -348,17 +350,17 @@ export function componentExtend(child, parent)
 				obj = Object.assign(obj, child[attr_name]);
 				child[attr_name] = obj;
 			}
+			
+			parent2[attr_name] = Object.assign({}, child[attr_name]);
 		}
 	}
 	
 	/* Copy props from parent to child */
-	copy(parent, child, "methods");
-	copy(parent, child, "computed");
-	copy(parent, child, "components");
-	copy(parent, child, "emits");
-	copy(parent, child, "props");
-	copy(parent, child, "props");
-	copy(parent, child, "emits");
+	copy(parent, child, "methods", parent2);
+	copy(parent, child, "computed", parent2);
+	copy(parent, child, "components", parent2);
+	copy(parent, child, "emits", parent2);
+	copy(parent, child, "props", parent2);
 	
 	const events =
 	[
