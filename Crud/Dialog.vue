@@ -122,9 +122,11 @@
 				
 				<div class='component_dialog__buttons' v-if="showButtons()">
 					<slot name="buttons">
-						<Button v-for="button, index in model.buttons" v-bind:data-action="button.action"
-						@click="onButtonClick(button.action, $event)" v-bind:type="button.type"
-						:key="index"
+						<Button v-for="button, index in model.buttons"
+							v-bind:data-action="button.action"
+							@click="onButtonClick(button.action, $event)"
+							v-bind:type="button.type"
+							:key="index"
 						>{{ button.label }}</Button>
 					</slot>
 				</div>

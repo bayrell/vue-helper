@@ -71,12 +71,11 @@
 						<div class="crud_form__row_label">{{ field.label }}</div>
 						<div class="crud_form__row_value">
 							<component v-bind:is="field.component"
-								v-bind:name="field.api_name"
-								v-bind:crud="{
-									item: model.item,
-									field: field
-								}"
-								v-bind:value="model.getItemValue(field.api_name)"
+								v-bind:name="field.name"
+								v-bind="Object.assign({}, field, {
+									crud_item: model.item
+								})"
+								v-bind:value="model.getItemValue(field.name)"
 								@crudEvent="onCrudEvent($event)"
 							/>
 						</div>

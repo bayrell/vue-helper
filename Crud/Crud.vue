@@ -105,7 +105,9 @@
 					
 					<div class="component_crud__top_button" v-else >
 						<Button type="success" @click="onShowAdd()">
-							[+] {{ model.constructor.getMessage("top_button_show_add_title", model.current_item) }}
+							[+] {{ model.constructor.getMessage(
+								"top_button_show_add_title", model.current_item
+							) }}
 						</Button>
 					</div>
 					
@@ -131,15 +133,14 @@
 								:key="field.api_name"
 							>
 								<component v-bind:is="field.component"
-									v-bind:crud="{
+									v-bind="Object.assign({}, field, {
 										page_action: page_action,
 										route_names: route_names,
-										index: item_index,
-										item: item,
-										field: field,
-										model: model
-									}"
-									v-bind:value="model.getItemValue(item_index, field.api_name)"
+										crud_index: item_index,
+										crud_item: item,
+										crud_model: model
+									})"
+									v-bind:value="model.getItemValue(item_index, field.name)"
 									@crudEvent="onCrudComponentEvent($event)"
 								/>
 							</td>
@@ -162,9 +163,9 @@
 						>
 							<template v-slot:buttons>
 								<Button type="primary"
-									@click="onDialogFormButtonClick('form_save')">Save</Button>
+									@click="onSaveFormButtonSaveClick()">Save</Button>
 								<Button type=""
-									@click="onDialogFormButtonClick('form_cancel')">Cancel</Button>
+									@click="onSaveFormButtonCancelClick()">Cancel</Button>
 							</template>
 						</Form>
 					</template>
@@ -179,8 +180,8 @@
 						{{ model.constructor.getMessage("delete_text", model.dialog_delete.item) }}
 					</template>
 					<template v-slot:buttons>
-						<Button type="danger" @click="onDialogFormButtonClick('delete_yes')">Yes</Button>
-						<Button type="" @click="onDialogFormButtonClick('delete_no')">No</Button>
+						<Button type="danger" @click="onDeleteFormButtonYesClick()">Yes</Button>
+						<Button type="" @click="onDeleteFormButtonNoClick()">No</Button>
 					</template>
 				</Dialog>
 			</slot>
@@ -189,7 +190,7 @@
 		<div class="component_crud_save" v-if="page_action == 'edit' || page_action == 'add'">
 			<slot name="component_crud_save_back">
 				<div class="component_crud_save_back">
-					<Button type="primary" @click="onDialogFormButtonClick('form_back')">Back</Button>
+					<Button type="primary" @click="onSaveFormButtonBackClick()">Back</Button>
 				</div>
 			</slot>
 			<slot name="component_crud_save">
@@ -198,7 +199,7 @@
 				>
 					<template v-slot:buttons>
 						<Button type="primary"
-							@click="onDialogFormButtonClick('form_save')">Save</Button>
+							@click="onSaveFormButtonSaveClick()">Save</Button>
 					</template>
 				</Form>
 			</slot>
@@ -270,34 +271,15 @@ export const Crud =
 		{
 			this.model.showDelete(item);
 		},
-		onDialogFormButtonClick: function(action)
-		{
-			if (action == "form_save")
-			{
-				this.onSaveFormButtonSaveClick();
-			}
-			else if (action == "form_cancel")
-			{
-				this.onSaveFormButtonCancelClick();
-			}
-			else if (action == "form_back")
-			{
-				this.onSaveFormButtonBackClick();
-			}
-			else if (action == "delete_yes")
-			{
-				this.onDeleteFormButtonYesClick();
-			}
-			else if (action == "delete_no")
-			{
-				this.onDeleteFormButtonNoClick();
-			}
-		},
 		onSaveFormButtonSaveClick: function()
 		{
 			this.model.doSaveForm();
 		},
 		onSaveFormButtonCancelClick: function()
+		{
+			this.onSaveFormButtonBackClick();
+		},
+		onSaveFormButtonBackClick: function()
 		{
 			let route_names = this.model.constructor.getRouteNames();
 			let item_original = this.model.form_save.item_original;
@@ -312,19 +294,11 @@ export const Crud =
 			}
 			else
 			{
-				if (window.history.state.back)
-				{
-					this.$router.push({ path: window.history.state.back });
-				}
-				else
+				if (route_names.list != undefined)
 				{
 					this.$router.push({ name: route_names.list });
 				}
 			}
-		},
-		onSaveFormButtonBackClick: function()
-		{
-			this.onSaveFormButtonCancelClick();
 		},
 		onDeleteFormButtonYesClick: function()
 		{

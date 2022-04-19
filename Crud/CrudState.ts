@@ -86,7 +86,16 @@ export class SelectOption extends BaseObject
 
 export class FieldInfo extends BaseObject
 {
-	api_name: string;
+	/* Input name */
+	name: string;
+	
+	/* Input value */
+	value: any;
+	
+	/* Input type */
+	type: string;	
+	
+	/* Input label */
 	label: string;
 	component: any;
 	
@@ -108,13 +117,14 @@ export class FieldInfo extends BaseObject
 	
 	
 	
+	
 	/**
 	 * Init
 	 */
 	init(params:any)
 	{
 		/* Init variables */
-		this.api_name = "";
+		this.name = "";
 		this.label = "";
 		this.component = null;
 		
@@ -145,7 +155,7 @@ export class FieldInfo extends BaseObject
 	 */
 	assignValue(key:string, value:any)
 	{
-		if (key == "api_name") this.api_name = String(value);
+		if (key == "name") this.name = String(value);
 		else if (key == "label") this.label = String(value);
 		else if (key == "component") this.component = String(value);
 		else super.assignValue(key, value);
@@ -377,7 +387,7 @@ export class CrudState extends BaseObject
 	{
 		let pk_fields:Array<string> = this.fields
 			.filter( (info:FieldInfo) => info.primary )
-			.map( (info:FieldInfo) => info.api_name )
+			.map( (info:FieldInfo) => info.name )
 		;
 		return pk_fields;
 	}
@@ -507,11 +517,11 @@ export class CrudState extends BaseObject
 	/**
 	 * Returns form value
 	 */
-	getItemValue(index: number, api_name: string): any
+	getItemValue(index: number, name: string): any
 	{
 		if (this.items[index] == undefined) return "";
 		let item: any = this.items[index];
-		let arr: Array<string> = api_name.split(".");
+		let arr: Array<string> = name.split(".");
 		return attr(item, arr, "");
 	}
 	
@@ -613,7 +623,7 @@ export class CrudState extends BaseObject
 					for (let i=0; i<fields.length; i++)
 					{
 						let field: FieldInfo = fields[i];
-						if (field.api_name == field_name)
+						if (field.name == field_name)
 						{
 							callback(field);
 						}

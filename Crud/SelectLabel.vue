@@ -52,9 +52,9 @@ export const SelectLabel =
 	{
 		getSelectValue: function(value)
 		{
-			for(let i=0; i<this.crud.field.options.length; i++)
+			for(let i=0; i<this.options.length; i++)
 			{
-				let option = this.crud.field.options[i];
+				let option = this.options[i];
 				if (option.id == value) return option.value;
 			}
 			return value;

@@ -63,6 +63,7 @@ export function responseOk(response)
  */
 export function getModel (instance)
 {
+	if (instance.store != undefined) return instance.store;
 	let arr = instance.store_path ? instance.store_path.slice() : [];
 	let obj = instance.$store.state;	
 	return attr(obj, arr, null);
@@ -197,7 +198,9 @@ export const mixin =
 {
 	props:
 	{
-		store_path: Array
+		store: Object,
+		store_path: Array,
+		page_action: String,
 	},
 	computed:
 	{
@@ -220,7 +223,7 @@ export const mixin =
 		{
 			return getModel(this);
 		},
-		changeModel(keys, new_value)
+		setModel(keys, new_value)
 		{
 			let model = getModel(this);
 			setAttr(model, keys, new_value);
@@ -228,12 +231,6 @@ export const mixin =
 		getState()
 		{
 			return this.$store.state;
-		},
-		$commit (action, params)
-		{
-			let obj = this;
-			var arr = obj.store_path.concat( action.split("/") );
-			obj.$store.commit(arr.join("/"), params);
 		},
 		attr(obj, keys, default_value = null)
 		{

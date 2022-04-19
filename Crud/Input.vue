@@ -37,6 +37,7 @@
 	<input class="component_input"
 		v-bind:name="name" v-bind:type="type"
 		v-bind:value="getCurrentValue()"
+		v-bind:autocomplete="getAutoComplete()"
 		@change="onChange(name, $event)"
 	/>
 </template>
@@ -60,6 +61,18 @@ export const Input =
 	},
 	methods:
 	{
+		getAutoComplete: function()
+		{
+			if (this.component_params)
+			{
+				let value = this.component_params["autocomplete"];
+				if (value === true)
+				{
+					return "on";
+				}
+			}
+			return "off";
+		},
 		getCurrentValue: function()
 		{
 			if (this.store_path == undefined) return this.value;

@@ -27,19 +27,13 @@
 .components_tabs__tab{
 	display: inline-block;
 	vertical-align: top;
-	padding: 5px 10px;
+	padding: 10px 15px;
 	cursor: pointer;
-	border: 1px $color_border solid;
-	border-right: 0;
-}
-.components_tabs__tab:last-child{
-	border-right: 1px $color_border solid;
+	border-bottom: 1px $color_border solid;
 }
 .components_tabs__tab.active{
-	background-color: $color_primary;
-	border: 1px darken($color_primary, 5%) solid;
-	border-right: 0;
-	color: #fff;
+	border: 1px $color_border solid;
+	border-bottom: 0px;
 }
 </style>
 

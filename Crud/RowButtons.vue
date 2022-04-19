@@ -35,10 +35,10 @@
 
 
 <template>
-	<div class="component_row_buttons" v-if="crud.field.component_params.buttons != undefined">
+	<div class="component_row_buttons" v-if="component_params.buttons != undefined">
 		
 		<div class="component_row_button"
-			v-for="button in crud.field.component_params.buttons"
+			v-for="button in component_params.buttons"
 			:key="button.action"
 		>
 			
@@ -70,10 +70,10 @@
 	<div class="component_row_buttons" v-else>
 		
 		<div class="component_row_button"
-			v-if="crud.route_names != undefined && crud.route_names.edit != undefined"
+			v-if="route_names != undefined && route_names.edit != undefined"
 		>
 			<router-link custom
-				:to="{ name: crud.route_names.edit, params: { id: getItemId() }}"
+				:to="{ name: route_names.edit, params: { id: getItemId() }}"
 				v-slot="{ href, navigate, route }"
 			>
 				<a :href="href" @click="navigate" class="nolink"
@@ -120,18 +120,18 @@ export const RowButtons =
 		{
 			let res = {};
 			res.id = this.getItemId();
-			if (button && button.params != null) res = button.params(res, this.crud, button);
+			if (button && button.params != null) res = button.params(res, this, button);
 			return res;
 		},
 		getItemId: function()
 		{
 			let id = 0;
 			if (
-				this.crud && this.crud.model &&
-				this.crud.model.constructor && this.crud.model.constructor.getItemId
+				this.crud_model &&
+				this.crud_model.constructor && this.crud_model.constructor.getItemId
 			)
 			{
-				id = this.crud.model.constructor.getItemId(this.crud.item);
+				id = this.crud_model.constructor.getItemId(this.crud_item);
 			}
 			return id;
 		},
@@ -139,9 +139,9 @@ export const RowButtons =
 		{
 			let event = new CrudEvent();
 			event.event_name = CRUD_EVENTS.ROW_BUTTON_CLICK;
-			event.crud_item = deepClone(this.crud.item);
+			event.crud_item = deepClone(this.crud_item);
 			event.button_name = button_name;
-			event.index = this.crud.index;
+			event.index = this.crud_index;
 			this.$emit( "crudEvent", event );
 		}
 	},

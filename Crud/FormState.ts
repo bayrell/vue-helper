@@ -29,6 +29,7 @@ import { AxiosResponse } from "axios";
 
 export class FormState extends BaseObject
 {
+	action: string = "";
 	title: string = "";
 	fields: Array<FieldInfo> = [];
 	item: Record<string, any> = {};
@@ -36,6 +37,7 @@ export class FormState extends BaseObject
 	error_code: number = 0;
 	message: string = "";
 	load_error: boolean = false;
+	tag: any;
 	
 	
 	/**
@@ -51,11 +53,11 @@ export class FormState extends BaseObject
 	/**
 	 * Returns form value
 	 */
-	getItemValue(api_name: string): any
+	getItemValue(name: string): any
 	{
 		if (this.item)
 		{
-			let arr: Array<string> = api_name.split(".");
+			let arr: Array<string> = name.split(".");
 			return attr(this.item, arr, "");
 		}
 		return "";
@@ -98,12 +100,14 @@ export class FormState extends BaseObject
 	 */
 	clear()
 	{
+		this.action = "";
 		this.title = "";
 		this.error_code = 0;
 		this.message = "";
 		this.load_error = false;
 		this.item = {};
 		this.item_original = null;
+		this.tag = null;
 	}
 	
 	
