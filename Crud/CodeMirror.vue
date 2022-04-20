@@ -106,8 +106,8 @@ export const CodeMirror =
 	mounted: function()
 	{
 		/* Set mode */
-		let mode = attr(this, ["crud", "field", "component_params", "mode"], "htmlmixed");
-		let readOnly = attr(this, ["crud", "field", "component_params", "readOnly"], false);
+		let mode = attr(this, ["component_params", "mode"], "htmlmixed");
+		let readOnly = attr(this, ["component_params", "readOnly"], false);
 		
 		this.instance = _CodeMirror.fromTextArea
 		(
@@ -127,7 +127,7 @@ export const CodeMirror =
 		this.new_value = "";
 		
 		/* Set min height */
-		let min_height = attr(this, ["crud", "field", "component_params", "min-height"], null);
+		let min_height = attr(this, ["component_params", "min-height"], null);
 		if (min_height != undefined && min_height != null)
 		{
 			this.instance.display.wrapper.style.minHeight = min_height;
