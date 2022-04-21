@@ -193,6 +193,7 @@
 					<Button type="primary" @click="onSaveFormButtonBackClick()">Back</Button>
 				</div>
 			</slot>
+			<slot name="component_crud_save_before"></slot>
 			<slot name="component_crud_save">
 				<Form v-bind:store_path="store_path.concat('form_save')"
 					@crudEvent="onCrudFormEvent($event, 'form_save')"
@@ -203,6 +204,7 @@
 					</template>
 				</Form>
 			</slot>
+			<slot name="component_crud_save_after"></slot>
 		</div>
 		
 		<slot name="crud_after"></slot>
