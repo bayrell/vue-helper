@@ -639,7 +639,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Read dictionary
 	 */
-	readDictionary
+	setOptionsFromDictionary
 	(
 		response:AxiosResponse | null,
 		kind: Array<string>,
