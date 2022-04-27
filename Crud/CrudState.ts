@@ -833,15 +833,15 @@ export class CrudState extends BaseObject
 		let res:boolean = await this.beforeApi("listPageLoadData");
 		if (!res) return;
 		
-		/* Set page title */
-		let page_title = (this.constructor as any).getMessage("list_title", null);
-		route.setPageTitle(page_title);
-		
 		/* Ajax request */
 		let search_data:any = this.getSearchData(route);
 		let response:AxiosResponse | null = await (this.constructor as any)
 			.apiLoadData( search_data )
 		;
+		
+		/* Set page title */
+		let page_title = (this.constructor as any).getMessage("list_title", null);
+		route.setPageTitle(page_title);
 		
 		/* Set result */
 		this.items = new Array();
@@ -880,10 +880,6 @@ export class CrudState extends BaseObject
 		let res:boolean = await this.beforeApi("editPageLoadData");
 		if (!res) return;
 		
-		/* Set page title */
-		let page_title = (this.constructor as any).getMessage("edit_title", null);
-		route.setPageTitle(page_title);
-		
 		/* Ajax request */
 		let response:AxiosResponse | null = await (this.constructor as any)
 			.apiLoadItem(route.to.params.id);
@@ -891,7 +887,7 @@ export class CrudState extends BaseObject
 		this.form_save.setLoadResponse(response);
 		
 		/* Set page title */
-		page_title = (this.constructor as any).getMessage("edit_title", this.form_save.item);
+		let page_title = (this.constructor as any).getMessage("edit_title", this.form_save.item);
 		route.setPageTitle(page_title);
 		
 		await this.afterApi("editPageLoadData", response);
