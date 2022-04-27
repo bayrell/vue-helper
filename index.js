@@ -503,3 +503,41 @@ export function objEquals(obj1, obj2)
 {
 	return objContains(obj1, obj2) && objContains(obj2, obj1);
 }
+
+
+/**
+ * Add get parameter to url
+ */
+export function urlGetAdd(s, key, value)
+{
+	key = encodeURI(key);
+	value = (value != undefined) ? encodeURI(value) : value;
+	var arr = s.split("?");
+	var s0 = arr[0] || "";
+	var s1 = arr[1] || "";
+	var arr2 = s1.split('&');
+	var i = arr2.length - 1;
+	while (i >= 0)
+	{
+		var x = arr2[i].split('=');
+		if (x.length == 2 && x[0] == key)
+		{
+			if ((value || false) == false)
+			{
+				arr2[i] = "";
+			}
+			else
+			{
+				x[1] = value;
+				arr2[i] = x.join('=');
+			}
+			break;
+		}
+		i--;
+	}
+	if (i < 0 && (value || false) != false) { arr2.push( [key, value].join('=') ); }
+	arr2 = arr2.filter(function (s){ return s != ""; });
+	var s2 = arr2.join('&');
+	if (s2 == "") return s0;
+	return s0 + "?" + s2;
+}

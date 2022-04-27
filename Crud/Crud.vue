@@ -39,7 +39,7 @@
 	}
 	&__table table{
 		border-collapse: collapse;
-		border: 1px $color_table_border solid;
+		/*border: 1px $color_table_border solid;*/
 	}
 	&__table td, &__table th{
 		border: 1px $color_table_border solid;
@@ -53,6 +53,11 @@
 	&__row.active{
 		background-color: $color_table_selected;
 		color: white;
+	}
+	&__pagination td, &__pagination th{
+		border-bottom-width: 0px;
+		border-left-width: 0px;
+		border-right-width: 0px;
 	}
 	&_save_back{
 		margin-bottom: 10px;
@@ -145,6 +150,15 @@
 								/>
 							</td>
 						</tr>
+						<tr class="component_crud__pagination">
+							<td :colspan="model.fields_table.length + 2">
+								<Pagination
+									v-bind:page="model.page"
+									v-bind:pages="model.pages"
+									v-bind:limit="model.limit"
+								/>
+							</td>
+						</tr>
 					</table>
 				</slot>
 			</div>
@@ -155,7 +169,9 @@
 					width="800px" buttons="false"
 				>
 					<template v-slot:title>
-						{{ model.constructor.getMessage("form_title", model.current_item) }}
+						{{ model.constructor.getMessage("form_title",
+							model.form_save.item_original
+						) }}
 					</template>
 					<template v-slot:content>
 						<Form v-bind:store_path="store_path.concat('form_save')"

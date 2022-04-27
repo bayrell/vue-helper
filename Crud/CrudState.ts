@@ -220,6 +220,9 @@ export class CrudState extends BaseObject
 	active_item: CrudItem | null;
 	active_item_pk: Record<string, any> | null;
 	dictionary: any;
+	page: Number;
+	pages: Number;
+	limit: Number;
 	
 	
 	/**
@@ -499,7 +502,8 @@ export class CrudState extends BaseObject
 		}
 		else if (message_type == "edit_title")
 		{
-			return "Edit " + this.getMessage("item", item);
+			return "Edit " + this.getMessage("item", item) +
+				(item ? (" \"" + this.getItemName(item) + "\"") : "");
 		}
 		else if (message_type == "delete_title")
 		{
@@ -811,9 +815,10 @@ export class CrudState extends BaseObject
 	 */
 	getSearchData(route: any)
 	{
+		let page = route.to.query.page || 1;
 		return {
 			"filter": [],
-			"start": 0,
+			"page": page,
 			"limit": 50,
 		};
 	}
@@ -833,13 +838,18 @@ export class CrudState extends BaseObject
 		route.setPageTitle(page_title);
 		
 		/* Ajax request */
+		let search_data:any = this.getSearchData(route);
 		let response:AxiosResponse | null = await (this.constructor as any)
-			.apiLoadData( this.getSearchData(route) );
+			.apiLoadData( search_data )
+		;
 		
 		/* Set result */
 		this.items = new Array();
 		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 		{
+			this.page = Number(response.data.result.page);
+			this.pages = Number(response.data.result.pages);
+			this.limit = Number(response.data.result.limit);
 			this.addItems(response.data.result.items);
 		}
 		
@@ -879,6 +889,10 @@ export class CrudState extends BaseObject
 			.apiLoadItem(route.to.params.id);
 		
 		this.form_save.setLoadResponse(response);
+		
+		/* Set page title */
+		page_title = (this.constructor as any).getMessage("edit_title", this.form_save.item);
+		route.setPageTitle(page_title);
 		
 		await this.afterApi("editPageLoadData", response);
 	}

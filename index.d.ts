@@ -60,3 +60,5 @@ export function deepClone(obj: any): any;
 export function objContains(obj1: any, obj2: any): boolean;
 
 export function objEquals(obj1: any, obj2: any): boolean;
+
+export function urlGetAdd(url: any, key: any, value: any): any;
