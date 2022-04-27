@@ -481,6 +481,10 @@ export class CrudState extends BaseObject
 		{
 			return "Items";
 		}
+		else if (message_type == "item")
+		{
+			return "item";
+		}
 		else if (message_type == "form_title")
 		{
 			if (item)
@@ -491,19 +495,21 @@ export class CrudState extends BaseObject
 		}
 		else if (message_type == "add_title")
 		{
-			return "Add item";
+			return "Add " + this.getMessage("item", item);
 		}
 		else if (message_type == "edit_title")
 		{
-			return "Edit item";
+			return "Edit " + this.getMessage("item", item);
 		}
 		else if (message_type == "delete_title")
 		{
-			return "Delete item";
+			return "Delete " + this.getMessage("item", item);
 		}
 		else if (message_type == "delete_text")
 		{
-			return "Do you sure to delete \"" + this.getItemName(item) + "\" ?";
+			return "Do you sure delete " + this.getMessage("item", item)
+				+ " \"" + this.getItemName(item) + "\" ?"
+			;
 		}
 		else if (message_type == "top_button_show_add_title")
 		{
