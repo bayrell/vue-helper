@@ -63,6 +63,7 @@
 			</div>
 			
 			<div class="crud_form__rows">
+				<slot name="rows_before"></slot>
 				<slot name="rows">
 					<div class="crud_form__row"
 						v-for="field in model.fields" :key="field.api_name"
@@ -82,6 +83,7 @@
 						<div class="crud_form__row_result"></div>
 					</div>
 				</slot>
+				<slot name="rows_after"></slot>
 			</div>
 			
 			<div class="crud_form__buttons">
