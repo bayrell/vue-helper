@@ -51,7 +51,7 @@
 			height: 30px;
 			font-size: 14px;
 			text-decoration: none;
-		}		
+		}
 	}
 	
 	li:first-child{

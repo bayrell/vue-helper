@@ -27,13 +27,14 @@ import { CrudState, FieldInfo } from "./CrudState";
 import { AxiosResponse } from "axios";
 
 
-export class FormState extends BaseObject
+export class FormState<CrudItem> extends BaseObject
 {
 	action: string = "";
 	title: string = "";
 	fields: Array<FieldInfo> = [];
-	item: Record<string, any> = {};
-	item_original: Record<string, any> | null = null;
+	item: CrudItem | null = null;
+	item_original: CrudItem | null = null;
+	item_class_name: any = null;
 	error_code: number = 0;
 	message: string = "";
 	load_error: boolean = false;
@@ -83,7 +84,14 @@ export class FormState extends BaseObject
 	{
 		if (item == null)
 		{
-			this.item = {};
+			if (this.item_class_name != null)
+			{
+				this.item = new this.item_class_name();
+			}
+			else
+			{
+				this.item = {} as any;
+			}
 			this.item_original = null;
 		}
 		else
@@ -105,7 +113,14 @@ export class FormState extends BaseObject
 		this.error_code = 0;
 		this.message = "";
 		this.load_error = false;
-		this.item = {};
+		if (this.item_class_name != null)
+		{
+			this.item = new this.item_class_name();
+		}
+		else
+		{
+			this.item = {} as any;
+		}
 		this.item_original = null;
 		this.tag = null;
 	}
@@ -132,7 +147,7 @@ export class FormState extends BaseObject
 		
 		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
 		{
-			let item:CrudState = response.data.result.item;
+			let item = response.data.result.item;
 			this.setItem(item);
 		}
 		else

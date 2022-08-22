@@ -24,7 +24,8 @@
 
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { DefineComponent } from "vue";
-import { attr, BaseObject, deepClone, notNull, objContains, objEquals, responseOk } from "vue-helper";
+import { attr, BaseObject, deepClone,
+	notNull, objContains, objEquals, responseOk } from "vue-helper";
 import { DialogState } from "./DialogState";
 import { FormState } from "./FormState";
 
@@ -44,7 +45,7 @@ export class CrudEvent
 	value: any = null;
 	tag: any = null;
 	index: number = 0;
-	crud_item: CrudItem | null = null;
+	crud_item: any = null;
 	button_name: string = "";
 	attrs: Record<string, any> = {};
 	$event: any = null;
@@ -114,7 +115,6 @@ export class FieldInfo extends BaseObject
 	
 	/* Component params */
     component_params: Record<string, any>;
-	
 	
 	
 	
@@ -202,27 +202,41 @@ export class CrudButton extends BaseObject
 
 
 
-export class CrudItem extends BaseObject
-{
-	
-}
-
-
-export class CrudState extends BaseObject
+export class CrudState<CrudItem> extends BaseObject
 {
 	page_action: string;
 	fields: Array<FieldInfo>;
 	fields_table: Array<FieldInfo>;
 	items: Array<CrudItem>;
-	form_save: FormState;
-	dialog_delete: DialogState;
-	dialog_form: DialogState;
+	form_save: FormState<CrudItem>;
+	dialog_delete: DialogState<CrudItem>;
+	dialog_form: DialogState<CrudItem>;
 	active_item: CrudItem | null;
 	active_item_pk: Record<string, any> | null;
 	dictionary: any;
 	page: Number;
 	pages: Number;
 	limit: Number;
+	
+	
+	/**
+	 * Returns class
+	 */
+	getClass(): typeof CrudState
+	{
+		return this.constructor as typeof CrudState;
+	}
+	
+	
+	
+	/**
+	 * Returns class item
+	 */
+	static getClassItem(): any
+	{
+		return "";
+	}
+	
 	
 	
 	/**
@@ -242,11 +256,16 @@ export class CrudState extends BaseObject
 		this.active_item_pk = null;
 		this.dictionary = null;
 		
+		/* Setup class items */
+		this.form_save.item_class_name = this.getClass().getClassItem();
+		this.dialog_delete.item_class_name = this.getClass().getClassItem();
+		this.dialog_form.item_class_name = this.getClass().getClassItem();
+		
 		/* Init class */
 		super.init(params);
 		
 		/* Crud init */
-		this.crudInit();
+		this.initCrud();
 	}
 	
 	
@@ -290,51 +309,44 @@ export class CrudState extends BaseObject
 	/**
 	 * Return api search url
 	 */
-	static getApiUrlSearch()
+	static getApiUrl(api_type: string, params: Record<string, any> | null = null)
 	{
-		return "/api/" + this.getApiObjectName() + "/crud/search/";
-	}
-	
-	
-	
-	/**
-	 * Return api search url
-	 */
-	static getApiUrlItem(id: string)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/item/" + encodeURIComponent(id) + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api create url
-	 */
-	static getApiUrlCreate()
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/create/";
-	}
-	
-	
-	
-	/**
-	 * Return api update url
-	 */
-	static getApiUrlUpdate(item: CrudItem)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/edit/" +
-			encodeURIComponent(this.getItemId(item)) + "/";
-	}
-	
-	
-	
-	/**
-	 * Return api delete url
-	 */
-	static getApiUrlDelete(item: CrudItem)
-	{
-		return "/api/" + this.getApiObjectName() + "/crud/delete/" +
-			encodeURIComponent(this.getItemId(item)) + "/";
+		let api_name = this.getApiObjectName();
+		if (api_type == "search")
+		{
+			return "/api/" + api_name + "/crud/" + api_type + "/";
+		}
+		else if (api_type == "item")
+		{
+			if (params)
+			{
+				let id = encodeURIComponent(params["id"]);
+				return "/api/" + api_name + "/crud/item/" + id + "/";
+			}
+		}
+		else if (api_type == "create")
+		{
+			return "/api/" + api_name + "/crud/create/";
+		}
+		else if (api_type == "update")
+		{
+			if (params)
+			{
+				let item = params["item"];
+				let id = encodeURIComponent(this.getItemId(item));
+				return "/api/" + api_name + "/crud/update/" + id + "/";
+			}
+		}
+		else if (api_type == "delete")
+		{
+			if (params)
+			{
+				let item = params["item"];
+				let id = encodeURIComponent(this.getItemId(item));
+				return "/api/" + api_name + "/crud/delete/" + id + "/";
+			}
+		}
+		return "";
 	}
 	
 	
@@ -344,7 +356,11 @@ export class CrudState extends BaseObject
 	 */
 	static getRouteNames(): Record<string, string>
 	{
-		return {};
+		return {
+			"list": "",
+			"add": "",
+			"edit": "",
+		};
 	}
 	
 	
@@ -364,9 +380,10 @@ export class CrudState extends BaseObject
 	/**
 	 * Returns new item
 	 */
-	static createNewItem(): CrudItem
+	static createNewItem()
 	{
-		return new CrudItem();
+		let f = this.getClassItem();
+		return new f();
 	}
 	
 	
@@ -374,7 +391,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Returns new item instance
 	 */
-	static createNewItemInstance(data:any = null): CrudItem
+	static createNewItemInstance(data:any = null)
 	{
 		let item = this.createNewItem();
 		if (data != undefined && data != null) item.assignValues(data);
@@ -448,7 +465,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Crud init
 	 */
-	crudInit()
+	initCrud()
 	{
 		
 	}
@@ -458,7 +475,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: CrudItem | null): string
+	static getItemName(item: any): string
 	{
 		return "";
 	}
@@ -468,7 +485,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Returns item id
 	 */
-	static getItemId(item: CrudItem | null): string
+	static getItemId(item: any): string
 	{
 		return "";
 	}
@@ -478,7 +495,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Returns crud message
 	 */
-	static getMessage(message_type: string, item: CrudItem | null): string
+	static getMessage(message_type: string, item: any): string
 	{
 		if (message_type == "list_title")
 		{
@@ -542,7 +559,7 @@ export class CrudState extends BaseObject
 	 */
 	addItem(data: any)
 	{
-		let item:CrudItem = (this.constructor as any).createNewItemInstance(data);
+		let item:CrudItem = this.getClass().createNewItemInstance(data);
 		this.items.unshift(item);
 		this.sortItems();
 	}
@@ -556,7 +573,7 @@ export class CrudState extends BaseObject
 	{
 		for (let i = 0; i < items.length; i++)
 		{
-			let item = (this.constructor as any).createNewItemInstance(items[i]);
+			let item = this.getClass().createNewItemInstance(items[i]);
 			this.items.push(item);
 		}
 		this.sortItems();
@@ -572,7 +589,7 @@ export class CrudState extends BaseObject
 		let index = this.findItemByPrimaryKey(old_item);
 		if (index != -1)
 		{
-			new_item = (this.constructor as any).createNewItemInstance(new_item);
+			new_item = this.getClass().createNewItemInstance(new_item);
 			this.items[index] = new_item;
 		}
 	}
@@ -687,18 +704,9 @@ export class CrudState extends BaseObject
 	/**
 	 * Set form save item
 	 */
-	setFormSaveItem(item:CrudState)
+	setFormSaveItem(item:CrudItem)
 	{
-		if (item != null)
-		{
-			this.form_save.item = deepClone(item);
-			this.form_save.item_original = deepClone(item);
-		}
-		else
-		{
-			this.form_save.item = new CrudItem();
-			this.form_save.item_original = null;
-		}
+		this.form_save.setItem(item);
 	}
 	
 	
@@ -706,7 +714,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Show form
 	 */
-	showForm(item:CrudState)
+	showFormDialog(item:CrudItem)
 	{
 		this.form_save.clear();
 		this.form_save.setItem(item);
@@ -719,7 +727,7 @@ export class CrudState extends BaseObject
 	/**
 	 * Show delete
 	 */
-	showDelete(item:CrudState)
+	showDeleteDialog(item:CrudState<CrudItem>)
 	{
 		if (item != null)
 		{
@@ -757,28 +765,25 @@ export class CrudState extends BaseObject
 	/**
 	 * Page data
 	 */
-	async pageLoadData(route: any)
+	async onRouteUpdate(route: any)
 	{
 		this.setPageAction(route.props.page_action);
 		
 		if (this.page_action == "list")
 		{
-			await this.listPageLoadData(route);
+			await this.onLoadPageList(route);
 		}
-		
 		else if (this.page_action == "add")
 		{
-			await this.addPageLoadData(route);
+			await this.onLoadPageSave(route);
 		}
-		
 		else if (this.page_action == "edit")
 		{
-			await this.editPageLoadData(route);
+			await this.onLoadPageSave(route);
 		}
-		
 		else if (this.page_action == "delete")
 		{
-			await this.deletePageLoadData(route);
+			await this.onLoadPageDelete(route);
 		}
 	}
 	
@@ -801,7 +806,7 @@ export class CrudState extends BaseObject
 	{
 		if (response &&
 			responseOk(response) &&
-			["listPageLoadData", "editPageLoadData"].indexOf(kind) >= 0
+			["onLoadPageList", "onLoadPageSave"].indexOf(kind) >= 0
 		)
 		{
 			this.dictionary = response.data.result.dictionary;
@@ -825,27 +830,32 @@ export class CrudState extends BaseObject
 	
 	
 	
+	/** ===================== List page ===================== **/
+	
 	/**
 	 * List Page Load data
 	 */
-	async listPageLoadData(route: any)
+	async onLoadPageList(route: any)
 	{
-		let res:boolean = await this.beforeApi("listPageLoadData");
+		let res:boolean = await this.beforeApi("onLoadPageList");
 		if (!res) return;
 		
 		/* Ajax request */
 		let search_data:any = this.getSearchData(route);
-		let response:AxiosResponse | null = await (this.constructor as any)
-			.apiLoadData( search_data )
+		let response:AxiosResponse | null = 
+			await this.getClass().processLoadListApi( search_data )
 		;
 		
 		/* Set page title */
-		let page_title = (this.constructor as any).getMessage("list_title", null);
+		let page_title = this.getClass().getMessage("list_title", null);
 		route.setPageTitle(page_title);
 		
 		/* Set result */
 		this.items = new Array();
-		if (response && typeof(response.data) == "object" && response.data.error.code == 1)
+		if (response &&
+			typeof(response.data) == "object" &&
+			response.data.error.code == 1
+		)
 		{
 			this.page = Number(response.data.result.page);
 			this.pages = Number(response.data.result.pages);
@@ -853,124 +863,7 @@ export class CrudState extends BaseObject
 			this.addItems(response.data.result.items);
 		}
 		
-		await this.afterApi("listPageLoadData", response);
-	}
-	
-	
-	
-	/**
-	 * Add Page Load data
-	 */
-	async addPageLoadData(route: any)
-	{
-		/* Set page title */
-		let page_title = (this.constructor as any).getMessage("add_title", null);
-		route.setPageTitle(page_title);
-		
-		this.form_save.clear();
-	}
-	
-	
-	
-	/**
-	 * Edit Page Load data
-	 */
-	async editPageLoadData(route: any)
-	{
-		let res:boolean = await this.beforeApi("editPageLoadData");
-		if (!res) return;
-		
-		/* Ajax request */
-		let response:AxiosResponse | null = await (this.constructor as any)
-			.apiLoadItem(route.to.params.id);
-		
-		this.form_save.setLoadResponse(response);
-		
-		/* Set page title */
-		let page_title = (this.constructor as any).getMessage("edit_title", this.form_save.item);
-		route.setPageTitle(page_title);
-		
-		await this.afterApi("editPageLoadData", response);
-	}
-	
-	
-	
-	/**
-	 * Delete Page Load data
-	 */
-	async deletePageLoadData(route: any)
-	{
-		/* Set page title */
-		let page_title = (this.constructor as any).getMessage("delete_title", null);
-		route.setPageTitle(page_title);
-	}
-	
-	
-	
-	/**
-	 * Save form
-	 */
-	async doSaveForm(component: DefineComponent)
-	{
-		let model:CrudState = this;
-		let item:CrudItem = model.form_save.item as CrudItem;
-		let item_original:CrudItem = model.form_save.item_original as CrudItem;
-		
-		let res:boolean = await this.beforeApi( "onSaveForm");
-		if (!res) return;
-		
-		model.form_save.setWaitResponse();
-		let response:AxiosResponse | null = await (this.constructor as any)
-			.apiSaveForm(item, item_original);
-		model.form_save.setAxiosResponse(response);
-		
-		if (item_original == null)
-		{
-			if (response && model.form_save.error_code == 1)
-			{
-				model.form_save.setItem(response.data.result.new_data);
-				model.addItem(response.data.result.new_data);
-				model.dialog_form.hide();
-			}
-		}
-		
-		else
-		{
-			if (response && typeof(response.data) == "object" && response.data.error.code == 1)
-			{
-				model.form_save.setItem(response.data.result.new_data);
-				model.updateItem(item_original, response.data.result.new_data);
-				model.dialog_form.hide();
-			}
-		}
-		
-		await this.afterApi("onSaveForm", response);
-	}
-	
-	
-	
-	/**
-	 * Delete form
-	 */
-	async doDeleteForm(component: DefineComponent)
-	{
-		let model:CrudState = this;
-		let item:CrudItem = model.dialog_delete.item as CrudItem;
-		
-		let res:boolean = await this.beforeApi("onDeleteForm");
-		if (!res) return;
-		
-		model.dialog_delete.setWaitResponse();
-		let response:AxiosResponse | null = await (this.constructor as any).apiDeleteForm(item);
-		model.dialog_delete.setAxiosResponse(response);
-		
-		if (item && response && typeof(response.data) == "object" && response.data.error.code == 1)
-		{
-			model.deleteItem(item);
-			model.dialog_delete.hide();
-		}
-		
-		await this.afterApi("onDeleteForm", response);
+		await this.afterApi("onLoadPageList", response);
 	}
 	
 	
@@ -978,9 +871,9 @@ export class CrudState extends BaseObject
 	/**
 	 * Load data api
 	 */
-	static async apiLoadData(data: any): Promise<AxiosResponse | null>
+	static async processLoadListApi(data: any): Promise<AxiosResponse | null>
 	{
-		let url = this.getApiUrlSearch();
+		let url = this.getApiUrl("search");
 		let response:AxiosResponse | null = null;
 		
 		try
@@ -1004,14 +897,17 @@ export class CrudState extends BaseObject
 	
 	
 	
+	/** ===================== Item page ===================== **/
+	
+	
 	/**
-	 * Load data api
+	 * Load item api
 	 */
-	static async apiLoadItem(id: string): Promise<AxiosResponse | null>
+	static async processLoadItemApi(id: string): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		
-		let url = this.getApiUrlItem(id);
+		let url = this.getApiUrl("item", { "id": id });
 		
 		try
 		{
@@ -1030,16 +926,103 @@ export class CrudState extends BaseObject
 	
 	
 	
+	/** ===================== Save Form ===================== **/
+	
+	/**
+	 * Add Page Load data
+	 */
+	async onLoadPageSave(route: any)
+	{
+		if (this.page_action == "add")
+		{
+			/* Set page title */
+			let page_title = this.getClass().getMessage("add_title", null);
+			route.setPageTitle(page_title);
+			
+			this.form_save.clear();
+		}
+		
+		else if (this.page_action == "edit")
+		{
+			let res:boolean = await this.beforeApi("onLoadPageSave");
+			if (!res) return;
+			
+			this.form_save.clear();
+			
+			/* Ajax request */
+			let response:AxiosResponse | null = await this.getClass()
+				.processLoadItemApi(route.to.params.id);
+			
+			this.form_save.setLoadResponse(response);
+			
+			/* Set page title */
+			let page_title = this.getClass()
+				.getMessage("edit_title", this.form_save.item)
+			;
+			route.setPageTitle(page_title);
+			
+			await this.afterApi("onLoadPageSave", response);
+		}
+	}
+	
+	
+	
+	/**
+	 * Save form
+	 */
+	async processSaveForm(component: DefineComponent)
+	{
+		let item:CrudItem = this.form_save.item as CrudItem;
+		let item_original:CrudItem = this.form_save.item_original as CrudItem;
+		
+		let res:boolean = await this.beforeApi( "processSaveForm");
+		if (!res) return;
+		
+		this.form_save.setWaitResponse();
+		let response:AxiosResponse | null = await (this.constructor as any)
+			.processSaveFormApi(item, item_original);
+			this.form_save.setAxiosResponse(response);
+		
+		if (item_original == null)
+		{
+			if (response && this.form_save.error_code == 1)
+			{
+				this.form_save.setItem(response.data.result.new_data);
+				this.addItem(response.data.result.new_data);
+				this.dialog_form.hide();
+			}
+		}
+		
+		else
+		{
+			if (response &&
+				typeof(response.data) == "object" &&
+				response.data.error.code == 1
+			)
+			{
+				this.form_save.setItem(response.data.result.new_data);
+				this.updateItem(item_original, response.data.result.new_data);
+				this.dialog_form.hide();
+			}
+		}
+		
+		await this.afterApi("processSaveForm", response);
+	}
+	
+	
+	
 	/**
 	 * Save form api
 	 */
-	static async apiSaveForm(item:CrudItem, item_original:CrudItem): Promise<AxiosResponse | null>
+	 static async processSaveFormApi(
+		item:any,
+		item_original:any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		
 		if (item_original == null)
 		{
-			let url = this.getApiUrlCreate();
+			let url = this.getApiUrl("create");
 			
 			try
 			{
@@ -1060,7 +1043,7 @@ export class CrudState extends BaseObject
 		
 		else
 		{
-			let url = this.getApiUrlUpdate(item_original);
+			let url = this.getApiUrl("update", {"item": item_original});
 			
 			try
 			{
@@ -1084,16 +1067,60 @@ export class CrudState extends BaseObject
 	
 	
 	
+	/** ==================== Delete Form ==================== **/
+	
+	/**
+	 * Delete Page Load data
+	 */
+	async onLoadPageDelete(route: any)
+	{
+		/* Set page title */
+		let page_title = this.getClass().getMessage("delete_title", null);
+		route.setPageTitle(page_title);
+	}
+	
+	
+	
+	/**
+	 * Delete form
+	 */
+	async processDeleteForm(component: DefineComponent)
+	{
+		let item:CrudItem = this.dialog_delete.item as CrudItem;
+		
+		let res:boolean = await this.beforeApi("processDeleteForm");
+		if (!res) return;
+		
+		this.dialog_delete.setWaitResponse();
+		let response:AxiosResponse | null = await this.getClass()
+			.processDeleteFormApi(item)
+		;
+		this.dialog_delete.setAxiosResponse(response);
+		
+		if (
+			item && response &&
+			typeof(response.data) == "object" && response.data.error.code == 1
+		)
+		{
+			this.deleteItem(item);
+			this.dialog_delete.hide();
+		}
+		
+		await this.afterApi("processDeleteForm", response);
+	}
+	
+	
+	
 	/**
 	 * Delete form api
 	 */
-	static async apiDeleteForm(item:CrudItem): Promise<AxiosResponse | null>
+	static async processDeleteFormApi(item:any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		
 		if (item)
 		{
-			let url = this.getApiUrlDelete(item);
+			let url = this.getApiUrl("delete", {"item": item});
 			
 			try
 			{
@@ -1110,6 +1137,5 @@ export class CrudState extends BaseObject
 		
 		return response;
 	}
-	
 	
 }

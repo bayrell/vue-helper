@@ -51,7 +51,7 @@ export class DialogButton extends BaseObject
 	
 }
 
-export class DialogState extends BaseObject
+export class DialogState<CrudItem> extends BaseObject
 {
 	open: boolean;
 	title: string;
@@ -60,7 +60,8 @@ export class DialogState extends BaseObject
 	message: string;
 	attrs: Record<string, any>;
 	tag: any;
-	item: Record<string, any>;
+	item: CrudItem;
+	item_class_name: any = null;
 	
 	
 	/**
@@ -76,7 +77,16 @@ export class DialogState extends BaseObject
 		this.message = "";
 		this.attrs = {};
 		this.tag = null;
-		this.item = {};
+		
+		/* Create item */
+		if (this.item_class_name != null)
+		{
+			this.item = new this.item_class_name();
+		}
+		else
+		{
+			this.item = {} as any;
+		}
 		
 		/* Init class */
 		super.init(params);
@@ -123,7 +133,14 @@ export class DialogState extends BaseObject
 	{
 		if (item == null)
 		{
-			this.item = {};
+			if (this.item_class_name != null)
+			{
+				this.item = new this.item_class_name();
+			}
+			else
+			{
+				this.item = {} as any;
+			}
 		}
 		else
 		{
@@ -140,7 +157,14 @@ export class DialogState extends BaseObject
 	{
 		this.error_code = 0;
 		this.message = "";
-		this.item = {};
+		if (this.item_class_name != null)
+		{
+			this.item = new this.item_class_name();
+		}
+		else
+		{
+			this.item = {} as any;
+		}
 	}
 	
 	

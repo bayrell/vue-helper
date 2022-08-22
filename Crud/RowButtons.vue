@@ -70,7 +70,7 @@
 	<div class="component_row_buttons" v-else>
 		
 		<div class="component_row_button"
-			v-if="route_names != undefined && route_names.edit != undefined"
+			v-if="route_names != undefined && route_names.edit != undefined && route_names.edit != ''"
 		>
 			<router-link custom
 				:to="{ name: route_names.edit, params: { id: getItemId() }}"

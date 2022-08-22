@@ -8,6 +8,7 @@ export class BaseObject {
     assignValue(key: string, value: any): any
     assignValues(params: any): any;
     getValues(): any;
+    getClass(): typeof BaseObject;
 
 }
 

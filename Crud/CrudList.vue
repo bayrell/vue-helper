@@ -92,7 +92,7 @@
 				<slot name="top_buttons">
 					
 					<div class="component_crud__top_button"
-						v-if="route_names != undefined && route_names.add != undefined"
+						v-if="route_names != undefined && route_names.add != undefined && route_names.add != ''"
 					>
 						<router-link custom
 							:to="{ name: route_names.add }"
@@ -203,26 +203,6 @@
 			</slot>
 		</div>
 		
-		<div class="component_crud_save" v-if="page_action == 'edit' || page_action == 'add'">
-			<slot name="component_crud_save_back">
-				<div class="component_crud_save_back">
-					<Button type="primary" @click="onSaveFormButtonBackClick()">Back</Button>
-				</div>
-			</slot>
-			<slot name="component_crud_save_before"></slot>
-			<slot name="component_crud_save">
-				<Form v-bind:store_path="store_path.concat('form_save')"
-					@crudEvent="onCrudFormEvent($event, 'form_save')"
-				>
-					<template v-slot:buttons>
-						<Button type="primary"
-							@click="onSaveFormButtonSaveClick()">Save</Button>
-					</template>
-				</Form>
-			</slot>
-			<slot name="component_crud_save_after"></slot>
-		</div>
-		
 		<slot name="crud_after"></slot>
 	</div>
 </template>
@@ -231,12 +211,12 @@
 <script lang="js">
 
 import { defineComponent } from 'vue';
-import { mixin, deepClone } from "vue-helper";
+import { mixin, deepClone, componentExtend, onRouteUpdate } from "vue-helper";
 import { CRUD_EVENTS, CrudEvent } from "./CrudState";
 
-export const Crud =
+export const CrudList =
 {
-	name: "Crud",
+	name: "CrudList",
 	mixins: [ mixin ],
 	props: ["page_action"],
 	computed:
@@ -279,19 +259,19 @@ export const Crud =
 		},
 		onShowAdd: function()
 		{
-			this.model.showForm(null);
+			this.model.showFormDialog(null);
 		},
 		onShowEdit: function(item)
 		{
-			this.model.showForm(item);
+			this.model.showFormDialog(item);
 		},
 		onShowDelete: function(item)
 		{
-			this.model.showDelete(item);
+			this.model.showDeleteDialog(item);
 		},
 		onSaveFormButtonSaveClick: function()
 		{
-			this.model.doSaveForm();
+			this.model.processSaveForm();
 		},
 		onSaveFormButtonCancelClick: function()
 		{
@@ -303,8 +283,21 @@ export const Crud =
 			let item_original = this.model.form_save.item_original;
 			
 			let is_back = false;
-			if (item_original == null && route_names.add != undefined) is_back = true;
-			if (item_original != null && route_names.edit != undefined) is_back = true;
+			if (item_original == null && 
+				route_names.add != undefined &&
+				route_names.add != ""
+			)
+			{
+				is_back = true;
+			}
+			
+			if (item_original == null && 
+				route_names.add != undefined &&
+				route_names.add != ""
+			)
+			{
+				is_back = true;
+			}
 			
 			if (!is_back)
 			{
@@ -320,16 +313,24 @@ export const Crud =
 		},
 		onDeleteFormButtonYesClick: function()
 		{
-			this.model.doDeleteForm();
+			this.model.processDeleteForm();
 		},
 		onDeleteFormButtonNoClick: function()
 		{
 			this.model.dialog_delete.hide();
 		},
+	},
+	beforeRouteEnter(to, from, next)
+	{
+		onRouteUpdate("beforeRouteEnter", to, from, next);
+	},
+	beforeRouteUpdate(to, from, next)
+	{
+		onRouteUpdate("beforeRouteUpdate", to, from, next);
 	}
 };
 
 
-export default defineComponent(Crud);
+export default defineComponent(CrudList);
 
 </script>
