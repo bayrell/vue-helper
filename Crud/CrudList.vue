@@ -86,7 +86,7 @@
 		
 		<slot name="crud_before"></slot>
 		
-		<div class="component_crud_list" v-if="page_action == undefined || page_action == 'list'">
+		<div class="component_crud_list">
 		
 			<div class="component_crud__top_buttons">
 				<slot name="top_buttons">
@@ -283,14 +283,6 @@ export const CrudList =
 			let item_original = this.model.form_save.item_original;
 			
 			let is_back = false;
-			if (item_original == null && 
-				route_names.add != undefined &&
-				route_names.add != ""
-			)
-			{
-				is_back = true;
-			}
-			
 			if (item_original == null && 
 				route_names.add != undefined &&
 				route_names.add != ""

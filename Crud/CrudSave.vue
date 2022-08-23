@@ -86,7 +86,7 @@
 		
 		<slot name="crud_before"></slot>
 		
-		<div class="component_crud_save" v-if="page_action == 'edit' || page_action == 'add'">
+		<div class="component_crud_save">
 			<slot name="component_crud_save_back">
 				<div class="component_crud_save_back">
 					<Button type="primary" @click="onSaveFormButtonBackClick()">Back</Button>
@@ -97,9 +97,27 @@
 				<Form v-bind:store_path="store_path.concat('form_save')"
 					@crudEvent="onCrudFormEvent($event, 'form_save')"
 				>
+					<template v-slot:title>
+						<slot name="component_crud_save_title"></slot>
+					</template>
+					<template v-slot:rows_before>
+						<slot name="component_crud_save_rows_before"></slot>
+					</template>
+					<template v-slot:rows_after>
+						<slot name="component_crud_save_rows_after"></slot>
+					</template>
+					<template v-slot:rows_first>
+						<slot name="component_crud_save_rows_first"></slot>
+					</template>
+					<template v-slot:rows_last>
+						<slot name="component_crud_save_rows_last"></slot>
+					</template>
 					<template v-slot:buttons>
 						<Button type="primary"
 							@click="onSaveFormButtonSaveClick()">Save</Button>
+					</template>
+					<template v-slot:result>
+						<slot name="component_crud_save_result"></slot>
 					</template>
 				</Form>
 			</slot>
@@ -131,9 +149,16 @@ export const CrudSave =
 	},
 	methods:
 	{
-		onSaveFormButtonSaveClick: function()
+		onCrudFormEvent: function($event, form_name)
 		{
-			this.model.doSaveForm();
+		},
+		onSaveFormButtonSaveClick: async function()
+		{
+			await this.model.processSaveForm();
+			let page_title = this.model.constructor
+				.getMessage("edit_title", this.model.form_save.item)
+			;
+			this.setPageTitle(page_title);
 		},
 		onSaveFormButtonCancelClick: function()
 		{
@@ -148,15 +173,7 @@ export const CrudSave =
             {
                 this.$router.push({ name: route_names.list });
             }
-		},
-		onDeleteFormButtonYesClick: function()
-		{
-			this.model.doDeleteForm();
-		},
-		onDeleteFormButtonNoClick: function()
-		{
-			this.model.dialog_delete.hide();
-		},
+		}
 	},
     beforeRouteEnter(to, from, next)
 	{

@@ -357,7 +357,7 @@ export class CrudState<CrudItem> extends BaseObject
 	static getRouteNames(): Record<string, string>
 	{
 		return {
-			"list": "",
+			"list": "app:spaces:list",
 			"add": "",
 			"edit": "",
 		};
