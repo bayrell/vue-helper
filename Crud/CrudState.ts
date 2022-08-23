@@ -318,11 +318,7 @@ export class CrudState<CrudItem> extends BaseObject
 		}
 		else if (api_type == "item")
 		{
-			if (params)
-			{
-				let id = encodeURIComponent(params["id"]);
-				return "/api/" + api_name + "/crud/item/" + id + "/";
-			}
+			return "/api/" + api_name + "/crud/item/";
 		}
 		else if (api_type == "create")
 		{
@@ -330,21 +326,11 @@ export class CrudState<CrudItem> extends BaseObject
 		}
 		else if (api_type == "update")
 		{
-			if (params)
-			{
-				let item = params["item"];
-				let id = encodeURIComponent(this.getItemId(item));
-				return "/api/" + api_name + "/crud/update/" + id + "/";
-			}
+			return "/api/" + api_name + "/crud/update/";
 		}
 		else if (api_type == "delete")
 		{
-			if (params)
-			{
-				let item = params["item"];
-				let id = encodeURIComponent(this.getItemId(item));
-				return "/api/" + api_name + "/crud/delete/" + id + "/";
-			}
+			return "/api/" + api_name + "/crud/delete/";
 		}
 		return "";
 	}
@@ -445,16 +431,19 @@ export class CrudState<CrudItem> extends BaseObject
 		(
 			(find_item: CrudItem) =>
 			{
+				let c1 = 0;
+				let c2 = 0;
 				for (let key in pk)
 				{
 					let item1 = (item as any)[key];
 					let item2 = (find_item as any)[key];
 					if (item1 != undefined && item2 != undefined && item1 == item2)
 					{
-						return true;
+						c2++;
 					}
+					c1++;
 				}
-				return false;
+				return c1 == c2 && c1 > 0 && c2 > 0;
 			}
 		);
 		return index;
@@ -831,6 +820,15 @@ export class CrudState<CrudItem> extends BaseObject
 	
 	
 	
+	/**
+	 * Process search data
+	 */
+	processPostData(kind: string, data: any)
+	{
+		return data;
+	}
+	
+	
 	/** ===================== List page ===================== **/
 	
 	/**
@@ -842,14 +840,11 @@ export class CrudState<CrudItem> extends BaseObject
 		if (!res) return;
 		
 		/* Ajax request */
-		let search_data:any = this.getSearchData(route);
+		let post_data:any = this.getSearchData(route);
+		post_data = this.processPostData("onLoadPageList", post_data);
 		let response:AxiosResponse | null = 
-			await this.getClass().processLoadListApi( search_data )
+			await this.getClass().processLoadListApi( post_data )
 		;
-		
-		/* Set page title */
-		let page_title = this.getClass().getMessage("list_title", null);
-		route.setPageTitle(page_title);
 		
 		/* Set result */
 		this.items = new Array();
@@ -872,18 +867,14 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Load data api
 	 */
-	static async processLoadListApi(data: any): Promise<AxiosResponse | null>
+	static async processLoadListApi(post_data: any): Promise<AxiosResponse | null>
 	{
-		let url = this.getApiUrl("search");
+		let url = this.getApiUrl("search", {"post_data": post_data});
 		let response:AxiosResponse | null = null;
 		
 		try
 		{
-			response = await axios.post
-			(
-				url,
-				data
-			);
+			response = await axios.post(url, post_data);
 		}
 		catch (e)
 		{
@@ -904,15 +895,15 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Load item api
 	 */
-	static async processLoadItemApi(id: string): Promise<AxiosResponse | null>
+	static async processLoadItemApi(post_data: any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		
-		let url = this.getApiUrl("item", { "id": id });
+		let url = this.getApiUrl("item", {"post_data": post_data});
 		
 		try
 		{
-			response = await axios.get(url);
+			response = await axios.post(url, post_data);
 		}
 		catch (e)
 		{
@@ -936,10 +927,6 @@ export class CrudState<CrudItem> extends BaseObject
 	{
 		if (this.page_action == "add")
 		{
-			/* Set page title */
-			let page_title = this.getClass().getMessage("add_title", null);
-			route.setPageTitle(page_title);
-			
 			this.form_save.clear();
 		}
 		
@@ -950,17 +937,19 @@ export class CrudState<CrudItem> extends BaseObject
 			
 			this.form_save.clear();
 			
+			/* Get post data */
+			let post_data = {
+				"pk": {
+					"id": route.to.params.id
+				},
+			};
+			post_data = this.processPostData("onLoadPageSave", post_data);
+			
 			/* Ajax request */
 			let response:AxiosResponse | null = await this.getClass()
-				.processLoadItemApi(route.to.params.id);
+				.processLoadItemApi(post_data);
 			
 			this.form_save.setLoadResponse(response);
-			
-			/* Set page title */
-			let page_title = this.getClass()
-				.getMessage("edit_title", this.form_save.item)
-			;
-			route.setPageTitle(page_title);
 			
 			await this.after("onLoadPageSave", {"response": response});
 		}
@@ -979,10 +968,18 @@ export class CrudState<CrudItem> extends BaseObject
 		let res:boolean = await this.before( "processSaveForm", {} );
 		if (!res) return;
 		
+		/* Get post data */
+		let post_data = {
+			"pk": item_original ? this.getPrimaryKeyFromItem(item_original) : null,
+			"item": item,
+		};
+		post_data = this.processPostData("processSaveForm", post_data);
+		
+		/* Send post data */
 		this.form_save.setWaitResponse();
 		let response:AxiosResponse | null = await (this.constructor as any)
-			.processSaveFormApi(item, item_original);
-			this.form_save.setAxiosResponse(response);
+			.processSaveFormApi(post_data, item_original);
+		this.form_save.setAxiosResponse(response);
 		
 		if (item_original == null)
 		{
@@ -1015,23 +1012,18 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Save form api
 	 */
-	 static async processSaveFormApi(
-		item:any,
-		item_original:any): Promise<AxiosResponse | null>
+	static async processSaveFormApi(post_data:any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
+		let pk = post_data["pk"];
 		
-		if (item_original == null)
+		if (pk == null)
 		{
-			let url = this.getApiUrl("create");
+			let url = this.getApiUrl("create", {"post_data": post_data});
 			
 			try
 			{
-				response = await axios.post
-				(
-					url,
-					{ "item": item }
-				);
+				response = await axios.post(url, post_data);
 			}
 			catch (e)
 			{
@@ -1044,15 +1036,11 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		else
 		{
-			let url = this.getApiUrl("update", {"item": item_original});
+			let url = this.getApiUrl("update", {"post_data": post_data});
 			
 			try
 			{
-				response = await axios.post
-				(
-					url,
-					{ "item": item }
-				);
+				response = await axios.post(url, post_data);
 			}
 			catch (e)
 			{
@@ -1075,9 +1063,6 @@ export class CrudState<CrudItem> extends BaseObject
 	 */
 	async onLoadPageDelete(route: any)
 	{
-		/* Set page title */
-		let page_title = this.getClass().getMessage("delete_title", null);
-		route.setPageTitle(page_title);
 	}
 	
 	
@@ -1092,9 +1077,16 @@ export class CrudState<CrudItem> extends BaseObject
 		let res:boolean = await this.before("processDeleteForm", {});
 		if (!res) return;
 		
+		/* Get post data */
+		let post_data = {
+			"pk": this.getPrimaryKeyFromItem(item),
+		};
+		post_data = this.processPostData("processDeleteForm", post_data);
+		
+		/* Send post data */
 		this.dialog_delete.setWaitResponse();
 		let response:AxiosResponse | null = await this.getClass()
-			.processDeleteFormApi(item)
+			.processDeleteFormApi(post_data)
 		;
 		this.dialog_delete.setAxiosResponse(response);
 		
@@ -1115,17 +1107,16 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Delete form api
 	 */
-	static async processDeleteFormApi(item:any): Promise<AxiosResponse | null>
+	static async processDeleteFormApi(post_data:any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
+		let url = this.getApiUrl("delete", {"post_data": post_data});
 		
-		if (item)
+		if (url)
 		{
-			let url = this.getApiUrl("delete", {"item": item});
-			
 			try
 			{
-				response = await axios.delete(url);
+				response = await axios.post(url, post_data);
 			}
 			catch (e)
 			{
