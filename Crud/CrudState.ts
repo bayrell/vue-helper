@@ -792,7 +792,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Before api
 	 */
-	async beforeApi(kind: string): Promise<boolean>
+	async before(kind: string, params: Record<string, any>): Promise<boolean>
 	{
 		return true;
 	}
@@ -802,8 +802,9 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * After api
 	 */
-	async afterApi(kind: string, response:AxiosResponse | null)
+	async after(kind: string, params: Record<string, any>)
 	{
+		let response = params["response"] as AxiosResponse;
 		if (response &&
 			responseOk(response) &&
 			["onLoadPageList", "onLoadPageSave"].indexOf(kind) >= 0
@@ -837,7 +838,7 @@ export class CrudState<CrudItem> extends BaseObject
 	 */
 	async onLoadPageList(route: any)
 	{
-		let res:boolean = await this.beforeApi("onLoadPageList");
+		let res:boolean = await this.before("onLoadPageList", {"route": route});
 		if (!res) return;
 		
 		/* Ajax request */
@@ -863,7 +864,7 @@ export class CrudState<CrudItem> extends BaseObject
 			this.addItems(response.data.result.items);
 		}
 		
-		await this.afterApi("onLoadPageList", response);
+		await this.after("onLoadPageList", {"response": response});
 	}
 	
 	
@@ -944,7 +945,7 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		else if (this.page_action == "edit")
 		{
-			let res:boolean = await this.beforeApi("onLoadPageSave");
+			let res:boolean = await this.before("onLoadPageSave", {"route": route});
 			if (!res) return;
 			
 			this.form_save.clear();
@@ -961,7 +962,7 @@ export class CrudState<CrudItem> extends BaseObject
 			;
 			route.setPageTitle(page_title);
 			
-			await this.afterApi("onLoadPageSave", response);
+			await this.after("onLoadPageSave", {"response": response});
 		}
 	}
 	
@@ -975,7 +976,7 @@ export class CrudState<CrudItem> extends BaseObject
 		let item:CrudItem = this.form_save.item as CrudItem;
 		let item_original:CrudItem = this.form_save.item_original as CrudItem;
 		
-		let res:boolean = await this.beforeApi( "processSaveForm");
+		let res:boolean = await this.before( "processSaveForm", {} );
 		if (!res) return;
 		
 		this.form_save.setWaitResponse();
@@ -1006,7 +1007,7 @@ export class CrudState<CrudItem> extends BaseObject
 			}
 		}
 		
-		await this.afterApi("processSaveForm", response);
+		await this.after("processSaveForm", {"response": response});
 	}
 	
 	
@@ -1088,7 +1089,7 @@ export class CrudState<CrudItem> extends BaseObject
 	{
 		let item:CrudItem = this.dialog_delete.item as CrudItem;
 		
-		let res:boolean = await this.beforeApi("processDeleteForm");
+		let res:boolean = await this.before("processDeleteForm", {});
 		if (!res) return;
 		
 		this.dialog_delete.setWaitResponse();
@@ -1106,7 +1107,7 @@ export class CrudState<CrudItem> extends BaseObject
 			this.dialog_delete.hide();
 		}
 		
-		await this.afterApi("processDeleteForm", response);
+		await this.after("processDeleteForm", {"response": response});
 	}
 	
 	
