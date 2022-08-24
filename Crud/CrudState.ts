@@ -569,7 +569,19 @@ export class CrudState<CrudItem> extends BaseObject
 	}
 	
 	
-	 
+	
+	/**
+	 * Set items
+	 */
+	setItems(items: Array<any>)
+	{
+		this.items = new Array();
+		this.addItems(items);
+	}
+	
+	
+	
+	
 	/**
 	 * Update item
 	 */
@@ -859,7 +871,7 @@ export class CrudState<CrudItem> extends BaseObject
 			this.addItems(response.data.result.items);
 		}
 		
-		await this.after("onLoadPageList", {"response": response});
+		await this.after("onLoadPageList", {"response": response, "route": route});
 	}
 	
 	
@@ -951,7 +963,7 @@ export class CrudState<CrudItem> extends BaseObject
 			
 			this.form_save.setLoadResponse(response);
 			
-			await this.after("onLoadPageSave", {"response": response});
+			await this.after("onLoadPageSave", {"response": response, "route": route});
 		}
 	}
 	

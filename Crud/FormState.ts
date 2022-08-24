@@ -42,6 +42,26 @@ export class FormState<CrudItem> extends BaseObject
 	
 	
 	/**
+	 * Is add
+	 */
+	isAdd()
+	{
+		return this.item_original == null;
+	}
+	
+	
+	
+	/**
+	 * Is edit
+	 */
+	isEdit()
+	{
+		return this.item_original != null;
+	}
+	
+	
+	
+	/**
 	 * Assign value
 	 */
 	assignValue(key:string, value:any)
