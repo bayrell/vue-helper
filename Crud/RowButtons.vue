@@ -126,12 +126,9 @@ export const RowButtons =
 		getItemId: function()
 		{
 			let id = 0;
-			if (
-				this.crud_model &&
-				this.crud_model.constructor && this.crud_model.constructor.getItemId
-			)
+			if (this.crud_model)
 			{
-				id = this.crud_model.constructor.getItemId(this.crud_item);
+				id = this.crud_model.getItemId(this.crud_item);
 			}
 			return id;
 		},

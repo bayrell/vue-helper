@@ -102,7 +102,7 @@
 								v-bind:data-route-name="route.name"
 							>
 								<Button type="success">
-									[+] {{ model.constructor.getMessage("top_button_show_add_title", model.current_item) }}
+									[+] {{ model.getMessage("top_button_show_add_title", model.current_item) }}
 								</Button>
 							</a>
 						</router-link>
@@ -110,7 +110,7 @@
 					
 					<div class="component_crud__top_button" v-else >
 						<Button type="success" @click="onShowAdd()">
-							[+] {{ model.constructor.getMessage(
+							[+] {{ model.getMessage(
 								"top_button_show_add_title", model.current_item
 							) }}
 						</Button>
@@ -169,7 +169,7 @@
 					width="800px" buttons="false"
 				>
 					<template v-slot:title>
-						{{ model.constructor.getMessage("form_title",
+						{{ model.getMessage("form_title",
 							model.form_save.item_original
 						) }}
 					</template>
@@ -190,10 +190,10 @@
 			<slot name="dialog_delete">
 				<Dialog v-bind:store_path="store_path.concat('dialog_delete')">
 					<template v-slot:title>
-						{{ model.constructor.getMessage("delete_title", model.dialog_delete.item) }}
+						{{ model.getMessage("delete_title", model.dialog_delete.item) }}
 					</template>
 					<template v-slot:text>
-						{{ model.constructor.getMessage("delete_text", model.dialog_delete.item) }}
+						{{ model.getMessage("delete_text", model.dialog_delete.item) }}
 					</template>
 					<template v-slot:buttons>
 						<Button type="danger" @click="onDeleteFormButtonYesClick()">Yes</Button>

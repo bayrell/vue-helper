@@ -422,6 +422,20 @@ export class CrudState<CrudItem> extends BaseObject
 	
 	
 	/**
+	 * Get primary key from route
+	 */
+	getPrimaryKeyFromRoute(route: any)
+	{
+		return {
+			"pk": {
+				"id": route.to.params.id
+			},
+		};
+	}
+	
+	
+	
+	/**
 	 * Find item
 	 */
 	findItemByPrimaryKey(item: any): number
@@ -464,7 +478,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Returns form value
 	 */
-	static getItemName(item: any): string
+	getItemName(item: any): string
 	{
 		return "";
 	}
@@ -472,11 +486,11 @@ export class CrudState<CrudItem> extends BaseObject
 	
 	
 	/**
-	 * Returns item id
+	 * Returns item id for route
 	 */
-	static getItemId(item: any): string
+	getItemId(item: any): string
 	{
-		return "";
+		return item ? String(item.id) : "0";
 	}
 	
 	
@@ -484,7 +498,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Returns crud message
 	 */
-	static getMessage(message_type: string, item: any): string
+	getMessage(message_type: string, item: any): string
 	{
 		if (message_type == "list_title")
 		{
@@ -946,7 +960,12 @@ export class CrudState<CrudItem> extends BaseObject
 	{
 		if (this.page_action == "add")
 		{
+			let res:boolean = await this.before("onLoadPageSave", {"route": route});
+			if (!res) return;
+			
 			this.form_save.clear();
+			
+			await this.after("onLoadPageSave", {"response": null, "route": route});
 		}
 		
 		else if (this.page_action == "edit")
@@ -957,11 +976,7 @@ export class CrudState<CrudItem> extends BaseObject
 			this.form_save.clear();
 			
 			/* Get post data */
-			let post_data = {
-				"pk": {
-					"id": route.to.params.id
-				},
-			};
+			let post_data = this.getPrimaryKeyFromRoute(route);
 			post_data = this.processPostData("onLoadPageSave", post_data);
 			
 			/* Ajax request */
