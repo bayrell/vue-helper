@@ -33,9 +33,11 @@
 	overflow: auto;
 	overflow-y: scroll;
 	display: none;
+	visibility: hidden;
 }
 .component_dialog__box.open{
 	display: block;
+	visibility: visible;
 }
 .component_dialog__shadow{
 	background-color: #000;

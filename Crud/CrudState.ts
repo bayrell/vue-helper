@@ -502,6 +502,13 @@ export class CrudState<CrudItem> extends BaseObject
 			}
 			return this.getMessage("add_title", item);
 		}
+		else if (message_type == "save_title")
+		{
+			return (item == null) ?
+				this.getMessage("add_title", item) :
+				this.getMessage("edit_title", item)
+			;
+		}
 		else if (message_type == "add_title")
 		{
 			return "Add " + this.getMessage("item", item);

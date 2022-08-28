@@ -422,7 +422,7 @@ export function setPageTitle(s)
  */
 export function attr(obj, keys, default_value = null)
 {
-	if (obj == null) return default_value;
+	if (obj == null || obj == undefined) return default_value;
 	if (keys instanceof String || typeof keys == "string")
 	{
 		let s = String(keys);
@@ -447,6 +447,7 @@ export function attr(obj, keys, default_value = null)
  */
 export function setAttr(obj, keys, new_value)
 {
+	if (obj == null || obj == undefined) return;
 	keys = keys.slice();
 	let count_keys = keys.length;
 	if (count_keys == 1) obj[keys[0]] = new_value;
