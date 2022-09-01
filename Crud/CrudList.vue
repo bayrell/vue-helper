@@ -269,9 +269,9 @@ export const CrudList =
 		{
 			this.model.showDeleteDialog(item);
 		},
-		onSaveFormButtonSaveClick: function()
+		onSaveFormButtonSaveClick: async function()
 		{
-			this.model.processSaveForm();
+			await this.model.processSaveForm();
 		},
 		onSaveFormButtonCancelClick: function()
 		{
@@ -283,9 +283,16 @@ export const CrudList =
 			let item_original = this.model.form_save.item_original;
 			
 			let is_back = false;
-			if (item_original == null && 
+			if (item_original == null &&
 				route_names.add != undefined &&
 				route_names.add != ""
+			)
+			{
+				is_back = true;
+			}
+			if (item_original != null &&
+				route_names.edit != undefined &&
+				route_names.edit != ""
 			)
 			{
 				is_back = true;

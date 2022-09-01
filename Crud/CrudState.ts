@@ -385,7 +385,19 @@ export class CrudState<CrudItem> extends BaseObject
 	}
 	
 	
-	 
+	
+	/**
+	 * Get primary key
+	 */
+	getFieldByName(name: string): FieldInfo | null
+	{
+		return this.fields.find(
+			(field: FieldInfo) => field.name == name
+		) || null;
+	}
+	
+	
+	
 	/**
 	 * Get primary key
 	 */
