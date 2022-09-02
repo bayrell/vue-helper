@@ -144,7 +144,7 @@ export const CrudSave =
 	{
 		route_names: function()
 		{
-			return this.model.constructor.getRouteNames();
+			return this.model.getRouteNames();
 		},
 	},
 	methods:
@@ -155,7 +155,7 @@ export const CrudSave =
 		onSaveFormButtonSaveClick: async function()
 		{
 			await this.model.processSaveForm();
-			let page_title = this.model.constructor
+			let page_title = this.model
 				.getMessage("edit_title", this.model.form_save.item)
 			;
 			this.setPageTitle(page_title);
@@ -166,7 +166,7 @@ export const CrudSave =
 		},
 		onSaveFormButtonBackClick: function()
 		{
-			let route_names = this.model.constructor.getRouteNames();
+			let route_names = this.model.getRouteNames();
 			let item_original = this.model.form_save.item_original;
 			
 			if (route_names.list != undefined)
