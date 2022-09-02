@@ -144,7 +144,7 @@ export const CrudSave =
 	{
 		route_names: function()
 		{
-			return this.model.getRouteNames();
+			return this.model.getClass().getRouteNames();
 		},
 	},
 	methods:
@@ -166,7 +166,7 @@ export const CrudSave =
 		},
 		onSaveFormButtonBackClick: function()
 		{
-			let route_names = this.model.getRouteNames();
+			let route_names = this.model.getClass().getRouteNames();
 			let item_original = this.model.form_save.item_original;
 			
 			if (route_names.list != undefined)

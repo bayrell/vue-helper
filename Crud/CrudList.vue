@@ -223,7 +223,7 @@ export const CrudList =
 	{
 		route_names: function()
 		{
-			return this.model.constructor.getRouteNames();
+			return this.model.getClass().getRouteNames();
 		},
 	},
 	methods:
@@ -279,7 +279,7 @@ export const CrudList =
 		},
 		onSaveFormButtonBackClick: function()
 		{
-			let route_names = this.model.constructor.getRouteNames();
+			let route_names = this.model.getClass().getRouteNames();
 			let item_original = this.model.form_save.item_original;
 			
 			let is_back = false;

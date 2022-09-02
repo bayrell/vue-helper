@@ -50,6 +50,7 @@ export const Field =
 		"crud_item",
 		"crud_model",
 		"value",
+		"values",
 		"name",
 		"api_name",
 		"type",
@@ -64,6 +65,7 @@ export const Field =
 		"can_create",
 		"can_update",
 		"group",
+		"default",
 		"default_value",
 	],
 	computed:

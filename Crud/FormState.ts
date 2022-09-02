@@ -104,7 +104,7 @@ export class FormState<CrudItem> extends BaseObject
 	{
 		if (item == null)
 		{
-			if (this.item_class_name != null)
+			if (this.item_class_name)
 			{
 				this.item = new this.item_class_name();
 			}
@@ -195,7 +195,9 @@ export class FormState<CrudItem> extends BaseObject
 			else
 			{
 				this.error_code = -1;
-				this.message = "System error (" + response.status + " " + response.statusText + ")";
+				this.message = "System error (" +
+					response.status + " " + response.statusText +
+				")";
 			}
 		}
 		else

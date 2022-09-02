@@ -75,8 +75,10 @@ export const Input =
 		},
 		getCurrentValue: function()
 		{
-			if (this.store_path == undefined) return this.value;
-			return this.model;
+			if (!this.store_path) return this.value;
+			if (this.model) return this.model;
+			if (this.default_value) return this.default_value;
+			return "";
 		},
 		onChange: function(name, $event)
 		{

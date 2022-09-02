@@ -232,7 +232,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Returns class item
 	 */
-	getClassItem(): any
+	static getClassItem(): any
 	{
 		return "";
 	}
@@ -257,9 +257,9 @@ export class CrudState<CrudItem> extends BaseObject
 		this.dictionary = null;
 		
 		/* Setup class items */
-		this.form_save.item_class_name = this.getClassItem();
-		this.dialog_delete.item_class_name = this.getClassItem();
-		this.dialog_form.item_class_name = this.getClassItem();
+		this.form_save.item_class_name = this.getClass().getClassItem();
+		this.dialog_delete.item_class_name = this.getClass().getClassItem();
+		this.dialog_form.item_class_name = this.getClass().getClassItem();
 		
 		/* Init class */
 		super.init(params);
@@ -299,7 +299,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Returns api object name
 	 */
-	getApiObjectName()
+	static getApiObjectName()
 	{
 		return "";
 	}
@@ -309,7 +309,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Return api search url
 	 */
-	getApiUrl(api_type: string, params: Record<string, any> | null = null)
+	static getApiUrl(api_type: string, params: Record<string, any> | null = null)
 	{
 		let api_name = this.getApiObjectName();
 		if (api_type == "search")
@@ -340,7 +340,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Returns route names
 	 */
-	getRouteNames(): Record<string, string>
+	static getRouteNames(): Record<string, string>
 	{
 		return {
 			"list": "app:spaces:list",
@@ -354,7 +354,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Return route name
 	 */
-	getRouteName(name: string): string
+	static getRouteName(name: string): string
 	{
 		let names = this.getRouteNames();
 		if (names && names[name] != undefined) return names[name];
@@ -366,7 +366,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Returns new item
 	 */
-	createNewItem()
+	static createNewItem()
 	{
 		let f = this.getClassItem();
 		return new f();
@@ -377,7 +377,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Returns new item instance
 	 */
-	createNewItemInstance(data:any = null)
+	static createNewItemInstance(data:any = null)
 	{
 		let item = this.createNewItem();
 		if (data != undefined && data != null) item.assignValues(data);
@@ -581,7 +581,7 @@ export class CrudState<CrudItem> extends BaseObject
 	 */
 	addItem(data: any)
 	{
-		let item:CrudItem = this.createNewItemInstance(data);
+		let item:CrudItem = this.getClass().createNewItemInstance(data);
 		this.items.unshift(item);
 		this.sortItems();
 	}
@@ -595,7 +595,7 @@ export class CrudState<CrudItem> extends BaseObject
 	{
 		for (let i = 0; i < items.length; i++)
 		{
-			let item = this.createNewItemInstance(items[i]);
+			let item = this.getClass().createNewItemInstance(items[i]);
 			this.items.push(item);
 		}
 		this.sortItems();
@@ -614,7 +614,6 @@ export class CrudState<CrudItem> extends BaseObject
 	
 	
 	
-	
 	/**
 	 * Update item
 	 */
@@ -623,7 +622,7 @@ export class CrudState<CrudItem> extends BaseObject
 		let index = this.findItemByPrimaryKey(old_item);
 		if (index != -1)
 		{
-			new_item = this.createNewItemInstance(new_item);
+			new_item = this.getClass().createNewItemInstance(new_item);
 			this.items[index] = new_item;
 		}
 	}
@@ -888,7 +887,7 @@ export class CrudState<CrudItem> extends BaseObject
 		let post_data:any = this.getSearchData(route);
 		post_data = await this.processPostData("onLoadPageList", post_data);
 		let response:AxiosResponse | null = 
-			await this.processLoadListApi( post_data )
+			await this.getClass().processLoadListApi( post_data )
 		;
 		
 		/* Set result */
@@ -912,14 +911,13 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Load data api
 	 */
-	async processLoadListApi(post_data: any): Promise<AxiosResponse | null>
+	static async processLoadListApi(post_data: any): Promise<AxiosResponse | null>
 	{
 		let url = this.getApiUrl("search", {"post_data": post_data});
 		let response:AxiosResponse | null = null;
 		
 		try
 		{
-			post_data = await this.processPostData("processLoadListApi", post_data);
 			response = await axios.post(url, post_data);
 		}
 		catch (e)
@@ -941,7 +939,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Load item api
 	 */
-	async processLoadItemApi(post_data: any): Promise<AxiosResponse | null>
+	static async processLoadItemApi(post_data: any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		
@@ -949,7 +947,6 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		try
 		{
-			post_data = await this.processPostData("processLoadItemApi", post_data);
 			response = await axios.post(url, post_data);
 		}
 		catch (e)
@@ -994,7 +991,8 @@ export class CrudState<CrudItem> extends BaseObject
 			post_data = await this.processPostData("onLoadPageSave", post_data);
 			
 			/* Ajax request */
-			let response:AxiosResponse | null = await this.processLoadItemApi(post_data);
+			let response:AxiosResponse | null = await this.getClass()
+				.processLoadItemApi(post_data);
 			
 			this.form_save.setLoadResponse(response);
 			
@@ -1024,7 +1022,7 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		/* Send post data */
 		this.form_save.setWaitResponse();
-		let response:AxiosResponse | null = await this
+		let response:AxiosResponse | null = await this.getClass()
 			.processSaveFormApi(post_data);
 		this.form_save.setAxiosResponse(response);
 		
@@ -1059,7 +1057,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Save form api
 	 */
-	async processSaveFormApi(post_data:any): Promise<AxiosResponse | null>
+	static async processSaveFormApi(post_data:any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let pk = post_data["pk"];
@@ -1070,7 +1068,6 @@ export class CrudState<CrudItem> extends BaseObject
 			
 			try
 			{
-				post_data = await this.processPostData("processSaveFormApi", post_data);
 				response = await axios.post(url, post_data);
 			}
 			catch (e)
@@ -1084,7 +1081,6 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		else
 		{
-			post_data = await this.processPostData("processSaveFormApi", post_data);
 			let url = this.getApiUrl("update", {"post_data": post_data});
 			
 			try
@@ -1134,7 +1130,8 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		/* Send post data */
 		this.dialog_delete.setWaitResponse();
-		let response:AxiosResponse | null = await this.processDeleteFormApi(post_data)
+		let response:AxiosResponse | null = await this.getClass()
+			.processDeleteFormApi(post_data)
 		;
 		this.dialog_delete.setAxiosResponse(response);
 		
@@ -1155,7 +1152,7 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Delete form api
 	 */
-	async processDeleteFormApi(post_data:any): Promise<AxiosResponse | null>
+	static async processDeleteFormApi(post_data:any): Promise<AxiosResponse | null>
 	{
 		let response:AxiosResponse | null = null;
 		let url = this.getApiUrl("delete", {"post_data": post_data});
@@ -1164,7 +1161,6 @@ export class CrudState<CrudItem> extends BaseObject
 		{
 			try
 			{
-				post_data = await this.processPostData("processDeleteFormApi", post_data);
 				response = await axios.post(url, post_data);
 			}
 			catch (e)
