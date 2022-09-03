@@ -92,7 +92,9 @@
 				<slot name="top_buttons">
 					
 					<div class="component_crud__top_button"
-						v-if="route_names != undefined && route_names.add != undefined && route_names.add != ''"
+						v-if="route_names != undefined &&
+						route_names.add != undefined &&
+						route_names.add != ''"
 					>
 						<router-link custom
 							:to="{ name: route_names.add }"
@@ -119,9 +121,8 @@
 				</slot>
 			</div>
 			
-			<slot name="table_before"></slot>
-			
 			<div class="component_crud__table">
+				<slot name="table_before"></slot>
 				<slot name="table">
 					<table>
 						<tr class="component_crud__header">
@@ -161,9 +162,9 @@
 						</tr>
 					</table>
 				</slot>
+				<slot name="table_after"></slot>
 			</div>
 			
-			<slot name="table_after"></slot>
 			<slot name="dialog_form">
 				<Dialog v-bind:store_path="store_path.concat('dialog_form')"
 					width="800px" buttons="false"

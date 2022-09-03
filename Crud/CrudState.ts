@@ -314,7 +314,7 @@ export class CrudState<CrudItem> extends BaseObject
 		let api_name = this.getApiObjectName();
 		if (api_type == "search")
 		{
-			return "/api/" + api_name + "/crud/" + api_type + "/";
+			return "/api/" + api_name + "/crud/search/";
 		}
 		else if (api_type == "item")
 		{
