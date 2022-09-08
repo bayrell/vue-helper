@@ -23,7 +23,7 @@
  */
 
 import { createStore, Store } from "vuex";
-
+import axios, { AxiosResponse, AxiosError } from "axios";
 
 
 /**
@@ -556,4 +556,19 @@ export function urlGetAdd(s, key, value)
 	var s2 = arr2.join('&');
 	if (s2 == "") return s0;
 	return s0 + "?" + s2;
+}
+
+
+
+/**
+ * Call api
+ */
+export async function callApi(url, post_data)
+{
+	let response = await axios.post(url, post_data);
+	if (response.data.ob_content)
+	{
+		console.log(response.data.ob_content);
+	}
+	return response;
 }

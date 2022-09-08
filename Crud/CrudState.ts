@@ -24,7 +24,7 @@
 
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { DefineComponent } from "vue";
-import { attr, BaseObject, deepClone,
+import { attr, BaseObject, callApi, deepClone,
 	notNull, objContains, objEquals, responseOk } from "vue-helper";
 import { DialogState } from "./DialogState";
 import { FormState } from "./FormState";
@@ -918,7 +918,7 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		try
 		{
-			response = await axios.post(url, post_data);
+			response = await callApi(url, post_data);
 		}
 		catch (e)
 		{
@@ -947,7 +947,7 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		try
 		{
-			response = await axios.post(url, post_data);
+			response = await callApi(url, post_data);
 		}
 		catch (e)
 		{
@@ -1068,7 +1068,7 @@ export class CrudState<CrudItem> extends BaseObject
 			
 			try
 			{
-				response = await axios.post(url, post_data);
+				response = await callApi(url, post_data);
 			}
 			catch (e)
 			{
@@ -1085,7 +1085,7 @@ export class CrudState<CrudItem> extends BaseObject
 			
 			try
 			{
-				response = await axios.post(url, post_data);
+				response = await callApi(url, post_data);
 			}
 			catch (e)
 			{
@@ -1161,7 +1161,7 @@ export class CrudState<CrudItem> extends BaseObject
 		{
 			try
 			{
-				response = await axios.post(url, post_data);
+				response = await callApi(url, post_data);
 			}
 			catch (e)
 			{
