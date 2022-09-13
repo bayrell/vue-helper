@@ -134,7 +134,15 @@ export const CodeMirror =
 		}
 		
 		/* Set value */
-		this.instance.getDoc().setValue( this.getCurrentValue() );
+		let value = this.getCurrentValue();
+		if (value)
+		{
+			this.instance.getDoc().setValue( value );
+		}
+		else
+		{
+			this.instance.getDoc().setValue("");
+		}
 		
 		/* onChange */
 		this.instance.on("change", (function(obj, onChange){ return (code) => {
