@@ -217,6 +217,7 @@ export class CrudState<CrudItem> extends BaseObject
 	page: Number;
 	pages: Number;
 	limit: Number;
+	start: Number;
 	
 	
 	/**
@@ -858,7 +859,7 @@ export class CrudState<CrudItem> extends BaseObject
 		return {
 			"filter": [],
 			"page": page,
-			"limit": 50,
+			"limit": 20,
 		};
 	}
 	
@@ -900,6 +901,7 @@ export class CrudState<CrudItem> extends BaseObject
 			this.page = Number(response.data.result.page);
 			this.pages = Number(response.data.result.pages);
 			this.limit = Number(response.data.result.limit);
+			this.start = Number(response.data.result.start);
 			this.addItems(response.data.result.items);
 		}
 		

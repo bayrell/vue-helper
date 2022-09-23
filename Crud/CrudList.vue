@@ -131,7 +131,8 @@
 							>{{ field.label }}</th>
 						</tr>
 						<tr class="component_crud__row"
-							v-for="item, item_index in model.items" :key="item.domain_name"
+							v-for="item, item_index in model.items"
+							:key="model.start + item_index"
 							v-bind:class="{ active: model.isRowActive(item) }"
 							@click="onRowClick(item, item_index, $event)"
 						>

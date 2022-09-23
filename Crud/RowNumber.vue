@@ -27,7 +27,9 @@
 
 
 <template>
-	<div class="component_row_number" v-bind:data-name="name" >{{ crud_index + 1 }}</div>
+	<div class="component_row_number" v-bind:data-name="name" >
+		{{ crud_model.start + crud_index + 1 }}
+	</div>
 </template>
 
 
