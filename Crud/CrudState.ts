@@ -853,13 +853,27 @@ export class CrudState<CrudItem> extends BaseObject
 	/**
 	 * Search data
 	 */
-	getSearchData(route: any)
+	getSearchParamsFromRoute(route: any)
 	{
 		let page = route.to.query.page || 1;
 		return {
+			"page": page,
+		};
+	}
+	
+	
+	
+	/**
+	 * Search data
+	 */
+	getSearchData(params: any)
+	{
+		let page = params.page || 1;
+		let limit = params.limit || 20;
+		return {
 			"filter": [],
 			"page": page,
-			"limit": 20,
+			"limit": limit,
 		};
 	}
 	
@@ -885,7 +899,8 @@ export class CrudState<CrudItem> extends BaseObject
 		if (!res) return;
 		
 		/* Ajax request */
-		let post_data:any = this.getSearchData(route);
+		let search_params = this.getSearchParamsFromRoute(route);
+		let post_data:any = this.getSearchData(search_params);
 		post_data = await this.processPostData("onLoadPageList", post_data);
 		let response:AxiosResponse | null = 
 			await this.getClass().processLoadListApi( post_data )
