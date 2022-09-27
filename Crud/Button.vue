@@ -36,6 +36,9 @@ button.component_button{
 button.component_button:active{
 	box-shadow: inset 0px 2px 5px 0px rgba(0,0,0,0.25);
 }
+button.component_button.disabled:active{
+	box-shadow: none;
+}
 button.component_button.small{
 	padding: 3px 6px;
 }
@@ -49,6 +52,10 @@ button.component_button.primary:hover{
 	border: 1px darken($color_primary, 10%) solid;
 	color: #fff;
 }
+button.component_button.primary.disabled:hover{
+	background-color: $color_primary;
+	border: 1px darken($color_primary, 5%) solid;
+}
 button.component_button.danger{
 	background-color: $color_danger;
     border: 1px darken($color_danger, 5%) solid;
@@ -58,6 +65,10 @@ button.component_button.danger:hover{
 	background-color: darken($color_danger, 5%);
     border: 1px darken($color_danger, 10%) solid;
 	color: #fff;
+}
+button.component_button.danger.disabled:hover{
+	background-color: $color_danger;
+    border: 1px darken($color_danger, 5%) solid;
 }
 button.component_button.success{
 	background-color: $color_success;
@@ -69,11 +80,16 @@ button.component_button.success:hover{
 	border: 1px darken($color_success, 10%) solid;
 	color: #fff;
 }
+button.component_button.danger.success:hover{
+	background-color: $color_success;
+	border: 1px darken($color_success, 5%) solid;
+}
 </style>
 
 
 <template>
-	<button class="component_button" v-bind:class="getButtonClass" @click="onClick"><slot/></button>
+	<button class="component_button" v-bind:disabled="isDisabled()"
+		v-bind:class="getButtonClass()" @click="onClick"><slot/></button>
 </template>
 
 
@@ -85,19 +101,25 @@ import { mixin } from "vue-helper";
 export const Button =
 {
 	mixins: [ mixin ],
-    props: ["type", "small"],
+    props: ["type", "small", "disabled"],
 	computed:
 	{
+	},
+	methods:
+	{
+		isDisabled: function()
+		{
+			if (this.disabled) return true;
+			return false;
+		},
 		getButtonClass: function()
 		{
 			let arr = ["button"];
 			if (this.small == "true") arr.push("small");
+			if (this.disabled) arr.push("disabled");
 			if (this.type) arr.push(this.type);
 			return arr.join(" ");
 		},
-	},
-	methods:
-	{
 		onClick: function()
 		{
 			//this.$emit("click");
