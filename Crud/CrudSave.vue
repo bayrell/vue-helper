@@ -155,10 +155,6 @@ export const CrudSave =
 		onSaveFormButtonSaveClick: async function()
 		{
 			await this.model.processSaveForm();
-			let page_title = this.model
-				.getMessage("edit_title", this.model.form_save.item)
-			;
-			this.setPageTitle(page_title);
 		},
 		onSaveFormButtonCancelClick: function()
 		{

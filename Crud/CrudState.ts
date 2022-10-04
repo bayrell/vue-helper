@@ -25,7 +25,7 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { DefineComponent } from "vue";
 import { attr, BaseObject, callApi, deepClone,
-	notNull, objContains, objEquals, responseOk } from "vue-helper";
+	notNull, objContains, objEquals, responseOk, setPageTitle } from "vue-helper";
 import { DialogState } from "./DialogState";
 import { FormState } from "./FormState";
 
@@ -256,6 +256,10 @@ export class CrudState<CrudItem> extends BaseObject
 		this.active_item = null;
 		this.active_item_pk = null;
 		this.dictionary = null;
+		this.start = 0;
+		this.limit = 1;
+		this.page = 0;
+		this.pages = 1;
 		
 		/* Setup class items */
 		this.form_save.item_class_name = this.getClass().getClassItem();
@@ -267,6 +271,46 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		/* Crud init */
 		this.initCrud();
+	}
+	
+	
+	
+	/**
+	 * Returns True if is create
+	 */
+	isCreate()
+	{
+		return this.page_action == "add" || this.page_action == "create";
+	}
+	
+	
+	
+	/**
+	 * Returns True if is update
+	 */
+	isUpdate()
+	{
+		return this.page_action == "edit" || this.page_action == "update";
+	}
+	
+	
+	
+	/**
+	 * Returns True if is list
+	 */
+	isList()
+	{
+		return this.page_action == "list";
+	}
+	
+	
+	
+	/**
+	 * Returns True if is delete
+	 */
+	isDelete()
+	{
+		return this.page_action == "delete";
 	}
 	
 	
@@ -653,6 +697,7 @@ export class CrudState<CrudItem> extends BaseObject
 	}
 	
 	
+	
 	/**
 	 * Edit field
 	 */
@@ -778,20 +823,9 @@ export class CrudState<CrudItem> extends BaseObject
 	 */
 	setPageAction(page_action: string)
 	{
-		if (page_action == "add" ||
-			page_action == "create" ||
-			page_action == "edit" ||
-			page_action == "delete" ||
-			page_action == "list"
-		)
-		{
-			if (page_action == "create") this.page_action = "add";
-			else this.page_action = page_action;
-		}
-		else
-		{
-			this.page_action = "list";
-		}
+		if (page_action == "add") this.page_action = "create";
+		else if (page_action == "edit") this.page_action = "update";
+		else this.page_action = page_action;
 	}
 	
 	
@@ -807,11 +841,11 @@ export class CrudState<CrudItem> extends BaseObject
 		{
 			await this.onLoadPageList(route);
 		}
-		else if (this.page_action == "add")
+		else if (this.page_action == "add" || this.page_action == "create")
 		{
 			await this.onLoadPageSave(route);
 		}
-		else if (this.page_action == "edit")
+		else if (this.page_action == "edit" || this.page_action == "update")
 		{
 			await this.onLoadPageSave(route);
 		}
@@ -834,10 +868,37 @@ export class CrudState<CrudItem> extends BaseObject
 	
 	
 	/**
+	 * After page title
+	 */
+	afterPageTitle(kind: string, params: Record<string, any>)
+	{
+		if (kind == "onLoadPageSave" || kind == "processSaveForm")
+		{
+			let item = this.form_save.item_original;
+			let page_title = this.getMessage("save_title", item);
+			setPageTitle(page_title);
+		}
+		else if (kind == "onLoadPageList")
+		{
+			let page_title = this.getMessage("list_title", null);
+			setPageTitle(page_title);
+		}
+		else if (kind == "onLoadPageDelete")
+		{
+			let page_title = this.getMessage("delete_title", null);
+			setPageTitle(page_title);
+		}
+	}
+	
+	
+	
+	/**
 	 * After api
 	 */
 	async after(kind: string, params: Record<string, any>)
 	{
+		this.afterPageTitle(kind, params);
+		
 		let response = params["response"] as AxiosResponse;
 		if (response &&
 			responseOk(response) &&
@@ -917,7 +978,7 @@ export class CrudState<CrudItem> extends BaseObject
 			this.pages = Number(response.data.result.pages);
 			this.limit = Number(response.data.result.limit);
 			this.start = Number(response.data.result.start);
-			this.addItems(response.data.result.items);
+			this.setItems(response.data.result.items);
 		}
 		
 		await this.after("onLoadPageList", {"response": response, "route": route});
@@ -986,7 +1047,7 @@ export class CrudState<CrudItem> extends BaseObject
 	 */
 	async onLoadPageSave(route: any)
 	{
-		if (this.page_action == "add")
+		if (this.page_action == "add" || this.page_action == "create")
 		{
 			let res:boolean = await this.before("onLoadPageSave", {"route": route});
 			if (!res) return;
@@ -996,7 +1057,7 @@ export class CrudState<CrudItem> extends BaseObject
 			await this.after("onLoadPageSave", {"response": null, "route": route});
 		}
 		
-		else if (this.page_action == "edit")
+		else if (this.page_action == "edit" || this.page_action == "update")
 		{
 			let res:boolean = await this.before("onLoadPageSave", {"route": route});
 			if (!res) return;
@@ -1045,7 +1106,10 @@ export class CrudState<CrudItem> extends BaseObject
 		
 		if (item_original == null)
 		{
-			if (response && this.form_save.error_code == 1)
+			if (response &&
+				typeof(response.data) == "object" &&
+				response.data.error.code == 1
+			)
 			{
 				this.form_save.setItem(response.data.result.new_data);
 				this.addItem(response.data.result.new_data);
@@ -1066,7 +1130,18 @@ export class CrudState<CrudItem> extends BaseObject
 			}
 		}
 		
-		await this.after("processSaveForm", {"response": response});
+		if (response &&
+			typeof(response.data) == "object" &&
+			response.data.error.code == 1
+		)
+		{
+			this.setPageAction("update");
+		}
+		
+		await this.after("processSaveForm", {
+			"response": response,
+			"item_original": item_original,
+		});
 	}
 	
 	

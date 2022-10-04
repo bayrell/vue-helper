@@ -138,6 +138,7 @@ export const CodeMirror =
 		if (value)
 		{
 			this.instance.getDoc().setValue( value );
+			this.new_value = value;
 		}
 		else
 		{
