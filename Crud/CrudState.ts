@@ -823,6 +823,7 @@ export class CrudState<CrudItem> extends BaseObject
 	 */
 	setPageAction(page_action: string)
 	{
+		if (page_action == undefined) page_action = "list";
 		if (page_action == "add") this.page_action = "create";
 		else if (page_action == "edit") this.page_action = "update";
 		else this.page_action = page_action;
